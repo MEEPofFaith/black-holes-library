@@ -48,14 +48,15 @@ configurations.all{
             details.useVersion "$mindustryVersion"
         }
     }
+}
+
+configure(allprojects){
+    apply plugin: 'java'
+    apply plugin: 'maven-publish'
 
     group = 'com.github.MEEPofFaith.MindustryBlackHoleRenderer'
-    publishing {
-        publications {
-            maven(MavenPublication) {
-                from components.java
-            }
-        }
+    publishing.publications.register('maven', MavenPublication){
+        from components.java
     }
 }
 

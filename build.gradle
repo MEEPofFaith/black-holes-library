@@ -50,8 +50,12 @@ configurations.all{
     }
 
     group = 'com.github.MEEPofFaith.MindustryBlackHoleRenderer'
-    publishing.publications.register('maven', MavenPublication){
-        from components.java
+    publishing {
+        publications {
+            maven(MavenPublication) {
+                from components.java
+            }
+        }
     }
 }
 

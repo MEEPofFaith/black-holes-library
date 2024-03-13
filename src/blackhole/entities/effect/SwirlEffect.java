@@ -31,6 +31,7 @@ public class SwirlEffect extends Effect{
     public float minDst, maxDst;
     /** Whether particles emit light. */
     public boolean light;
+    public float lightOpacity = 1f;
     /** If true, particle fades from edgeColor to effect color. Else, the particle is constantly the effect color. */
     public boolean lerp;
     public Color edgeColor;
@@ -127,7 +128,7 @@ public class SwirlEffect extends Effect{
                 Drawf.light(
                     e.x + v1.x, e.y + v1.y,
                     e.x + v2.x, e.y + v2.y,
-                    i * size * 6f, Draw.getColor().cpy(), l
+                    i * size * 6f, Draw.getColor().cpy(), l * lightOpacity
                 );
             }
 

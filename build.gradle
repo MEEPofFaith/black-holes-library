@@ -102,6 +102,10 @@ task deploy(type: Jar){
     }
 }
 
+publishing.publications.register('maven', MavenPublication){
+    from components.java
+}
+
 task move doLast{
     println "Yeeting the mod jar to the shadow realm..."
 

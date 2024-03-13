@@ -44,6 +44,15 @@ public class BlackHoleRenderer{
         if(bRenderer != null) bRenderer.advanced(advanced);
     }
 
+    /**
+     * Adds a black hole to the renderer.
+     *
+     * @param x x-coordinate of the center
+     * @param y y-coordinate of the center
+     * @param inRadius size of the black hole (radius of where it's black)
+     * @param outRadius end of the gravitational lensing range
+     * @param color color of the glowing rim
+     */
     public static void addBlackHole(float x, float y, float inRadius, float outRadius, Color color){
         bRenderer.add(x, y, inRadius, outRadius, color);
     }

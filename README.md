@@ -12,17 +12,16 @@ Note that mods that use this must depend on `MEEPofFaith/MindustryBlackHoleRende
 
 ## How to use
 
-1. Add the Jitpack repository to your repo
+1. Add the Jitpack repository to your repo.
 ```groovy
 repositories { maven { url 'https://jitpack.io' } }
 ```
-2. Add this mod to your dependencies
+2. Add this mod to your dependencies. See [releases](https://github.com/MEEPofFaith/MindustryBlackHoleRenderer/releases) for latest version.
 ```groovy
 dependencies {
     compileOnly 'com.github.MEEPofFaith:MindustryBlackHoleRenderer:<version>'
 }
 ```
-See [releases](https://github.com/MEEPofFaith/MindustryBlackHoleRenderer/releases) for latest version.
 3. Now that this mod has been added to your gradle. You just need to call `BlackHoleRenderer::addBlackHole` to draw black holes.
 
-Additionally includes `SwirlEffect` to draw the particles that fall in.
+    - Additionally includes `SwirlEffect` to draw the particles that spin around and fall in.

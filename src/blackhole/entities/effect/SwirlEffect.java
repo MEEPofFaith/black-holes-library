@@ -10,24 +10,38 @@ import mindustry.graphics.*;
 import static arc.graphics.g2d.Draw.*;
 import static arc.util.Tmp.*;
 
+/**
+ * A particle with a trail that falls into the center.
+ * When spawning, input the radius into the rotation param.
+ * Inputting a negative value makes the particle swirl counter-clockwise instead of clockwise.
+ */
 public class SwirlEffect extends Effect{
     public static TextureRegion hCircle;
 
+    /** How many points long the trail is. */
     public int length;
+    /** Radius of the trail. */
     public float width;
+    /** How much the particle will revolve around the center in degrees. */
     public float minRot, maxRot;
+    /**
+     * If set to values >= 0, the radius will be a random amount between minDst and maxDst,
+     * however the sign of the input is still used to determine rotation direction.
+     */
     public float minDst, maxDst;
+    /** Whether particles emit light. */
     public boolean light;
+    /** If true, particle fades from edgeColor to effect color. Else, the particle is constantly the effect color. */
     public boolean lerp;
-    public Color centerColor;
+    public Color edgeColor;
     public Interp fallterp = Interp.pow2Out;
     public Interp spinterp = Interp.pow3Out;
 
-    public SwirlEffect(float lifetime, float clipsize, Color centerColor, int length, float width, float minRot, float maxRot, float minDst, float maxDst, boolean light, boolean lerp){
+    public SwirlEffect(float lifetime, float clipsize, Color edgeColor, int length, float width, float minRot, float maxRot, float minDst, float maxDst, boolean light, boolean lerp){
         super();
         this.lifetime = lifetime;
         this.clip = clipsize;
-        this.centerColor = centerColor;
+        this.edgeColor = edgeColor;
         this.length = length;
         this.width = width;
         this.minRot = minRot;
@@ -38,8 +52,8 @@ public class SwirlEffect extends Effect{
         this.lerp = lerp;
     }
 
-    public SwirlEffect(float lifetime, Color centerColor, int length, float width, float minRot, float maxRot, float minDst, float maxDst, boolean light, boolean lerp){
-        this(lifetime, 400f, centerColor, length, width, minRot, maxRot, minDst, maxDst, light, lerp);
+    public SwirlEffect(float lifetime, Color edgeColor, int length, float width, float minRot, float maxRot, float minDst, float maxDst, boolean light, boolean lerp){
+        this(lifetime, 400f, edgeColor, length, width, minRot, maxRot, minDst, maxDst, light, lerp);
     }
 
     public SwirlEffect(float lifetime, int length, float width, float minRot, float maxRot, boolean light, boolean lerp){
@@ -47,7 +61,7 @@ public class SwirlEffect extends Effect{
     }
 
     public SwirlEffect(float lifetime, int length, float width, float minRot, float maxRot, boolean lerp){
-        this(lifetime, Color.black, length, width, minRot, maxRot, -1, -1, false, lerp);
+        this(lifetime, length, width, minRot, maxRot, false, lerp);
     }
 
     public SwirlEffect setInterps(Interp fallterp, Interp spinterp){
@@ -71,9 +85,9 @@ public class SwirlEffect extends Effect{
         }
         float l = Mathf.clamp(e.time / lifetime);
         if(lerp){
-            color(centerColor, e.color, l);
+            color(edgeColor, e.color, l);
         }else{
-            color(centerColor);
+            color(e.color);
         }
 
         int points = (int)Math.min(e.time, length);

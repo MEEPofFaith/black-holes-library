@@ -88,6 +88,12 @@ public class SwirlEffect extends Effect{
             fout = 1f - Mathf.clamp((e.time - points + i + 1) / lifetime);
             v2.trns(baseRot + addRot * spinterp.apply(fout), Mathf.maxZero(dst * fallterp.apply(fout)));
 
+            //Reached center, break
+            if(v1.equals(v2)){
+                width = i * size;
+                break;
+            }
+
             float a2 = -v1.angleTo(v2) * Mathf.degRad;
             float a1 = i == 0 ? a2 : lastAng;
 

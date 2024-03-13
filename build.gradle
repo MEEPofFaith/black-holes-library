@@ -102,6 +102,7 @@ task deploy(type: Jar){
     }
 }
 
+group = 'com.github.MEEPofFaith.MindustryBlackHoleRenderer'
 publishing.publications.register('maven', MavenPublication){
     from components.java
 }

@@ -1,23 +1,26 @@
 #the mod name as displayed in-game
-displayName: "Java Mod Template"
+displayName: "Black Hole Renderer"
 
 #the internal name of your mod
-name: "example-java-mod"
+name: "black-hole-renderer"
 
 #your name
-author: "You"
+author: "MEEPofFaith"
 
 #the fully qualified main class of the mod
-main: "example.ExampleJavaMod"
+main: "blackhole.BlackHoleMod"
 
 #the mod description as seen in the mod dialog
-description: "A Mindustry Java mod template."
+description: "A library mod for rendering black holes."
 
 #the mod version
-version: 1.0
+version: 0
 
 #the minimum game build required to run this mod
-minGameVersion: 145
+minGameVersion: 146
 
 #this is a java mod
 java: true
+
+#no content
+hidden: true

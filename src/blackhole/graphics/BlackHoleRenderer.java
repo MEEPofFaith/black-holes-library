@@ -25,7 +25,7 @@ public class BlackHoleRenderer{
 
     protected BlackHoleRenderer(boolean advanced){
         BShaders.createBlackHoleShaders();
-        toggleAdvanced(advanced);
+        advanced(advanced);
 
         Events.run(Trigger.draw, () -> {
             if(this.advanced){
@@ -74,8 +74,8 @@ public class BlackHoleRenderer{
                 colors[i * 4 + 2] = Tmp.c1.b;
                 colors[i * 4 + 3] = Tmp.c1.a;
             }
-            BShaders.rimShader.blackHoles = blackholes;
-            buffer.blit(BShaders.rimShader);
+            BShaders.lensingShader.blackHoles = blackholes;
+            buffer.blit(BShaders.lensingShader);
 
             BShaders.rimShader.blackHoles = blackholes;
             BShaders.rimShader.colors = colors;

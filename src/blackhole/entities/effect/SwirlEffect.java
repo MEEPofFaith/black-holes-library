@@ -62,7 +62,7 @@ public class SwirlEffect extends Effect{
     }
 
     public SwirlEffect(float lifetime, int length, float width, float minRot, float maxRot, boolean lerp){
-        this(lifetime, length, width, minRot, maxRot, false, lerp);
+        this(lifetime, length, width, minRot, maxRot, true, lerp);
     }
 
     public SwirlEffect setInterps(Interp fallterp, Interp spinterp){

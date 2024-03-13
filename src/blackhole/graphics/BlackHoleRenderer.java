@@ -96,19 +96,22 @@ public class BlackHoleRenderer{
     }
 
     private void simplifiedDraw(){
-        for(BlackHoleZone zone : zones){
-            float rad = zone.inRadius * 4;
-            Fill.light(
-                zone.x, zone.y,
-                Lines.circleVertices(rad), rad,
-                Tmp.c1.abgr8888(zone.color), Tmp.c2.set(Tmp.c1).a(0f)
-            );
-        }
-        Draw.color(Color.black);
-        for(BlackHoleZone zone : zones){
-            Fill.circle(zone.x, zone.y, zone.inRadius);
-        }
-        Draw.color();
+        Draw.draw(Layer.max, () -> {
+            for(BlackHoleZone zone : zones){
+                float rad = zone.inRadius * 4;
+                Fill.light(
+                    zone.x, zone.y,
+                    Lines.circleVertices(rad), rad,
+                    Tmp.c1.abgr8888(zone.color), Tmp.c2.set(Tmp.c1).a(0f)
+                );
+            }
+            Draw.color(Color.black);
+            for(BlackHoleZone zone : zones){
+                Fill.circle(zone.x, zone.y, zone.inRadius);
+            }
+            Draw.color();
+        });
+
         zones.clear();
     }
 

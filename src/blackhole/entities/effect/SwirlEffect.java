@@ -16,7 +16,7 @@ import static arc.util.Tmp.*;
  * Inputting a negative value makes the particle swirl counter-clockwise instead of clockwise.
  */
 public class SwirlEffect extends Effect{
-    public static TextureRegion hCircle;
+    private static TextureRegion hCircle;
 
     /** How many points long the trail is. */
     public int length;

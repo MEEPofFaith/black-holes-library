@@ -12,8 +12,10 @@ public class BShaders{
     public static RimShader rimShader;
 
     public static void createBlackHoleShaders(){
+        if(maxCount >= 510) return; //Exceeds maximum number of registers for a single shader
+
         if(lensingShader != null){
-            maxCount *= 2;
+            maxCount = Math.min(510, maxCount * 2);
             lensingShader.dispose();
             rimShader.dispose();
         }

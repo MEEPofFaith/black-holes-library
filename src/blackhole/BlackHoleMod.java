@@ -8,6 +8,8 @@ import static mindustry.Vars.ui;
 
 public class BlackHoleMod extends Mod{
     public BlackHoleMod(){
+        ClassMap.classes.put("BlackHolePart", blackhole.entities.part.BlackHolePart.class);
+        ClassMap.classes.put("DrawBlackHole", blackhole.world.draw.DrawBlackHole.class);
     }
 
     @Override

@@ -40,7 +40,6 @@ public class BlackHolePart extends DrawPart{
 
             BlackHoleRenderer.addBlackHole(rx, ry, Mathf.lerp(size, sizeTo, sclProg), Mathf.lerp(edge, edgeTo, sclProg), Tmp.c1);
         }
-
     }
 
     @Override

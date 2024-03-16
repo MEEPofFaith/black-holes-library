@@ -38,7 +38,7 @@ public class BlackHolePart extends DrawPart{
             Tmp.c1.set(color);
             if(colorTo != null) Tmp.c1.lerp(colorTo, prog);
 
-            BlackHoleRenderer.addBlackHole(rx, ry, Mathf.lerp(size, sizeTo, prog), Mathf.lerp(edge, edgeTo, sclProg), Tmp.c1);
+            BlackHoleRenderer.addBlackHole(rx, ry, Mathf.lerp(size, sizeTo, sclProg), Mathf.lerp(edge, edgeTo, sclProg), Tmp.c1);
         }
 
     }

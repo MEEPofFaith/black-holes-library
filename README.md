@@ -25,3 +25,40 @@ dependencies {
 3. Now that this mod has been added to your gradle. You just need to call `BlackHoleRenderer::addBlackHole` to draw black holes.
 
     - Additionally includes `SwirlEffect` to draw the particles that spin around and fall in.
+
+## Drawer and Part
+
+This mod also includes a `DrawBlackHole` drawer and `BlackHolePart`
+ part so that you don't need to make your own, and they are also compatable with json.
+
+### Sample code:
+#### DrawBlackHole
+```json
+{
+   "type": "DrawBlackHole",
+   "size": 5, //Radius of black hole
+   "edge": 25, //Extent of the lensing effect
+   "warmup": false //True by default. Whether to scale based on building warmup or always max size
+}
+```
+```java
+new DrawBlackHole(<size>, <edge>) //The size and edge can be set with a handy constructor
+```
+#### BlackHolePart
+Structured very similarly to other parts.
+```json
+{
+   "type": "BlackHolePart",
+   "x": 1,
+   "y": 1,
+   "moveX": 1,
+   "moveY": 1,
+   "size": 1, //Size when grow progress is 0. 0 by default
+   "sizeTo": 12, //Size when grow progress is 1
+   "edge": 4, //Edge when grow progress is 0. 0 by default
+   "edgeTo": 32, //Edge when grow progress is 1.
+   "progress": warmup,
+   "growProgrss": warmup
+}
+```
+You probably know how to translate json to java so I'm not gonna bother with a java example.

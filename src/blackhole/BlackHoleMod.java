@@ -3,13 +3,14 @@ package blackhole;
 import blackhole.graphics.*;
 import mindustry.mod.*;
 
-import static arc.Core.settings;
-import static mindustry.Vars.ui;
+import static arc.Core.*;
+import static mindustry.Vars.*;
 
 public class BlackHoleMod extends Mod{
     public BlackHoleMod(){
         ClassMap.classes.put("BlackHolePart", blackhole.entities.part.BlackHolePart.class);
         ClassMap.classes.put("DrawBlackHole", blackhole.world.draw.DrawBlackHole.class);
+        ClassMap.classes.put("SwirlEffect", blackhole.entities.effect.SwirlEffect.class);
     }
 
     @Override

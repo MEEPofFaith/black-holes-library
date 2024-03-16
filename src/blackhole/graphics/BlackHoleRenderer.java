@@ -4,6 +4,7 @@ import arc.*;
 import arc.graphics.*;
 import arc.graphics.g2d.*;
 import arc.graphics.gl.*;
+import arc.math.*;
 import arc.struct.*;
 import arc.util.*;
 import mindustry.game.EventType.*;
@@ -106,22 +107,47 @@ public class BlackHoleRenderer{
 
     private void simplifiedDraw(){
         Draw.draw(Layer.max, () -> {
-            for(BlackHoleZone zone : zones){
-                float rad = zone.inRadius * 4;
-                Fill.light(
-                    zone.x, zone.y,
-                    Lines.circleVertices(rad), rad,
-                    Tmp.c1.abgr8888(zone.color), Tmp.c2.set(Tmp.c1).a(0f)
-                );
+            Bloom bloom = renderer.bloom;
+            if(bloom != null){
+                bloom.capture();
+                simplifiedRims();
+                bloom.render();
+            }else{
+                simplifiedRims();
             }
+
             Draw.color(Color.black);
             for(BlackHoleZone zone : zones){
                 Fill.circle(zone.x, zone.y, zone.inRadius);
             }
             Draw.color();
-        });
 
-        zones.clear();
+            zones.clear();
+        });
+    }
+
+    private void simplifiedRims(){
+        for(BlackHoleZone zone : zones){
+            float rad = zone.inRadius * 4;
+            int vert = Lines.circleVertices(rad);
+            float space = 360f / vert;
+
+            Tmp.c1.abgr8888(zone.color);
+            float c1 = Tmp.c1.toFloatBits();
+            float c2 = Tmp.c1.a(0).toFloatBits();
+
+            for(int i = 0; i < vert; i++){
+                float sin1 = Mathf.sinDeg(i * space), sin2 = Mathf.sinDeg((i + 1) * space);
+                float cos1 = Mathf.cosDeg(i * space), cos2 = Mathf.cosDeg((i + 1) * space);
+
+                Fill.quad(
+                    zone.x + cos1 * zone.inRadius, zone.y + sin1 * zone.inRadius, c1,
+                    zone.x + cos2 * zone.inRadius, zone.y + sin2 * zone.inRadius, c1,
+                    zone.x + cos2 * rad, zone.y + sin2 * rad, c2,
+                    zone.x + cos1 * rad, zone.y + sin1 * rad, c2
+                );
+            }
+        }
     }
 
     private void advanced(boolean advanced){

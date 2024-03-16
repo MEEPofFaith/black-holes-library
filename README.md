@@ -57,8 +57,8 @@ Structured very similarly to other parts.
    "sizeTo": 12, //Size when grow progress is 1
    "edge": 4, //Edge when grow progress is 0. 0 by default
    "edgeTo": 32, //Edge when grow progress is 1.
-   "progress": warmup,
-   "growProgrss": warmup
+   "progress": "warmup",
+   "growProgrss": "warmup"
 }
 ```
 You probably know how to translate json to java so I'm not gonna bother with a java example.

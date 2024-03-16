@@ -8,9 +8,9 @@ While it would be really easy to just take my black hole renderer and copy it in
 
 By using a singular library mod, all mods use my black hole renderer will send their data to the same renderer and thus there are no conflicts.
 
-Note that mods that use this must depend on `MEEPofFaith/MindustryBlackHoleRenderer` and that this mod must be installed so that other mods can use it.
+Note that mods that use this must depend on `MEEPofFaith/MindustryBlackHoleRenderer` and that this mod must be installed so that other mods can use it. **Don't forget to also add `black-hole-renderer` to your `dependncies` in `mod.json`**
 
-## How to use
+## How to use (Java)
 
 1. Add the Jitpack repository to your repo.
 ```groovy

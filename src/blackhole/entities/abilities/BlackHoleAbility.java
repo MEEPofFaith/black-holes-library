@@ -13,8 +13,8 @@ import mindustry.type.*;
 public class BlackHoleAbility extends Ability{
     public float x, y;
     public float reload = 2f;
-    public float horizonRadius = 6f, lensingRadius = -1f;
-    public float damageRadius = -1f, suctionRadius = 160f;
+    public float horizonRadius = -1f, lensingRadius = -1f;
+    public float damageRadius = 6f, suctionRadius = 160f;
     public boolean repel = false;
     /** Base amount of force applied to units */
     public float force = 10f;
@@ -38,7 +38,7 @@ public class BlackHoleAbility extends Ability{
 
     @Override
     public void init(UnitType type){
-        if(damageRadius < 0f) damageRadius = horizonRadius;
+        if(horizonRadius < 0f) horizonRadius = damageRadius;
         if(lensingRadius < 0f) lensingRadius = suctionRadius;
     }
 

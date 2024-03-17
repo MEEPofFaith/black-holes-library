@@ -17,8 +17,8 @@ import mindustry.graphics.*;
 import static mindustry.Vars.*;
 
 public class BlackHoleBulletType extends BulletType{
-    public float horizonRadius = 6f, lensingRadius = -1f;
-    public float damageRadius = -1f, suctionRadius = 160f;
+    public float horizonRadius = -1f, lensingRadius = -1f;
+    public float damageRadius = 6f, suctionRadius = 160f;
     public boolean repel;
     /** Base amount of force applied to units */
     public float force = 10f;
@@ -60,7 +60,7 @@ public class BlackHoleBulletType extends BulletType{
         super.init();
         if(lensingRadius < 0f) lensingRadius = suctionRadius;
         if(shrinkTime < 0f) shrinkTime = swirlEffect.lifetime;
-        if(damageRadius < 0f) damageRadius = horizonRadius + 4f;
+        if(horizonRadius < 0f) horizonRadius = damageRadius;
 
         drawSize = Math.max(drawSize, lensingRadius * 2f);
     }

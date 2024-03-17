@@ -4,7 +4,10 @@ import arc.*;
 import arc.graphics.*;
 import arc.graphics.g2d.*;
 import arc.math.*;
+import arc.util.*;
+import arc.util.pooling.*;
 import mindustry.entities.*;
+import mindustry.gen.*;
 import mindustry.graphics.*;
 
 import static arc.graphics.g2d.Draw.*;
@@ -53,6 +56,8 @@ public class SwirlEffect extends Effect{
         this.maxDst = maxDst;
         this.light = light;
         this.lerp = lerp;
+
+        followParent = rotWithParent = true;
     }
 
     public SwirlEffect(float lifetime, Color edgeColor, int length, float width, float minRot, float maxRot, float minDst, float maxDst, boolean light, boolean lerp){
@@ -144,5 +149,51 @@ public class SwirlEffect extends Effect{
 
         if(hCircle == null) hCircle = Core.atlas.find("hcircle");
         Draw.rect(hCircle, e.x + v2.x, e.y + v2.y, width * 2f, width * 2f, -Mathf.radDeg * lastAng);
+    }
+
+    @Override
+    protected void add(float x, float y, float rotation, Color color, Object data){
+        BlackHoleEffectState entity = BlackHoleEffectState.create();
+        entity.effect = this;
+        entity.rotation = baseRotation + rotation;
+        entity.data = data;
+        entity.lifetime = lifetime;
+        entity.set(x, y);
+        entity.color.set(color);
+        if(followParent && data instanceof Posc p){
+            entity.parent = p;
+            entity.rotWithParent = rotWithParent;
+        }
+        entity.add();
+    }
+
+    public static class BlackHoleEffectState extends EffectState{
+        public static BlackHoleEffectState create() {
+            return Pools.obtain(BlackHoleEffectState.class, BlackHoleEffectState::new);
+        }
+
+        @Override
+        public void update(){
+            followParent: {
+                if(parent != null && parent.isAdded()){
+                    if(rotWithParent){
+                        if(parent instanceof Rotc r){
+                            x = parent.getX() + Angles.trnsx(r.rotation() + offsetPos, offsetX, offsetY);
+                            y = parent.getY() + Angles.trnsy(r.rotation() + offsetPos, offsetX, offsetY);
+                            //Do not change rotation. It is used for radius.
+                            break followParent;
+                        }
+                    }
+
+                    x = parent.getX() + offsetX;
+                    y = parent.getY() + offsetY;
+                }
+            }
+
+            time = Math.min(time + Time.delta,lifetime);
+            if (time >= lifetime) {
+                remove();
+            }
+        }
     }
 }

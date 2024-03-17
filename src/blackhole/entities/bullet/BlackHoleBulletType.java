@@ -1,12 +1,12 @@
 package blackhole.entities.bullet;
 
 import arc.audio.*;
+import arc.graphics.*;
 import arc.math.*;
-import arc.math.geom.*;
-import arc.struct.*;
 import arc.util.*;
 import blackhole.entities.effect.*;
 import blackhole.graphics.*;
+import blackhole.utils.*;
 import mindustry.audio.*;
 import mindustry.content.*;
 import mindustry.entities.*;
@@ -17,23 +17,14 @@ import mindustry.graphics.*;
 import static mindustry.Vars.*;
 
 public class BlackHoleBulletType extends BulletType{
-    /**
-     * Add bullet types you want to be immune to suction to this Seq.
-     * This Seq can also be referenced for anything else you do involving suction.
-     */
-    public static final Seq<Class<?>> immuneBulletTypes = Seq.with(
-        ContinuousBulletType.class,
-        LaserBulletType.class,
-        SapBulletType.class,
-        ShrapnelBulletType.class
-    );
 
     public Effect swirlEffect = new SwirlEffect(90f, 8, 3f, 120f, 480f, true).layer(Layer.effect + 0.005f);
     public Sound loopSound = Sounds.spellLoop;
     public float loopSoundVolume = 2f;
     public float suctionRadius = 160f, size = 6f, lensEdge = -1f, damageRadius = -1f;
-    public float force = 10f, scaledForce = 800f, bulletForce = 0.1f, bulletScaledForce = 1f;
+    public float force = 10f, scaledForce = 800f, bulletForce = 0.1f, scaledBulletForce = 1f;
     public float bulletDamage = 10f;
+    public @Nullable Color color = null;
     public float growTime = 10f, shrinkTime = -1f;
     public float swirlInterval = 3f;
     public int swirlEffects = 4;
@@ -77,40 +68,12 @@ public class BlackHoleBulletType extends BulletType{
     public void update(Bullet b){
         if(b.timer(1, 2f)){
             float fout = fout(b);
-            Damage.damage(b.team, b.x, b.y, damageRadius * fout, b.damage);
-
-            float sR = suctionRadius * fout;
-            Units.nearbyEnemies(b.team, b.x - sR, b.y - sR, sR * 2f, sR * 2f, unit -> {
-                if(unit.within(b.x, b.y, sR)){
-                    Vec2 impulse = Tmp.v1.trns(unit.angleTo(b), force + (1f - unit.dst(b) / sR) * scaledForce);
-                    if(repel) impulse.rotate(180f);
-                    unit.impulseNet(impulse);
-                }
-            });
-
-            Groups.bullet.intersect(b.x - sR, b.y - sR, sR * 2f, sR * 2f, other -> {
-                if(other != null && !checkType(other.type) && Mathf.within(b.x, b.y, other.x, other.y, sR) && b != other && b.team != other.team && other.type.speed > 0.01f){
-                    Vec2 impulse = Tmp.v1.trns(other.angleTo(b), bulletForce + (1f - other.dst(b) / sR) * bulletScaledForce);
-                    if(repel) impulse.rotate(180f);
-
-                    //Replicate unit impulseNet
-                    other.vel().add(impulse);
-
-                    if(other.isRemote()){
-                        other.move(impulse.x, impulse.y);
-                    }
-
-                    //Damage/absorb bullets
-                    if(other.type.hittable && Mathf.within(b.x, b.y, other.x, other.y, size * 2f)){
-                        float realDamage = bulletDamage * damageMultiplier(b);
-                        if(other.damage > realDamage){
-                            other.damage(other.damage - realDamage);
-                        }else{
-                            other.remove();
-                        }
-                    }
-                }
-            });
+            BlackHoleUtils.blackHoleUpdate(
+                b.team, b,
+                damageRadius * fout, suctionRadius * fout,
+                b.damage, bulletDamage * damageMultiplier(b),
+                repel, force, scaledForce, bulletForce, scaledBulletForce
+            );
         }
 
         if(!headless && b.data instanceof SoundLoop loop){
@@ -127,7 +90,7 @@ public class BlackHoleBulletType extends BulletType{
         if(swirlInterval > 0f && b.time <= b.lifetime - swirlEffect.lifetime){
             if(b.timer(0, swirlInterval)){
                 for(int i = 0; i < swirlEffects; i++){
-                    swirlEffect.at(b.x, b.y, suctionRadius, b.team.color, b);
+                    swirlEffect.at(b.x, b.y, suctionRadius, blackHoleColor(b), b);
                 }
             }
         }
@@ -136,7 +99,7 @@ public class BlackHoleBulletType extends BulletType{
     @Override
     public void draw(Bullet b){
         float fout = fout(b);
-        BlackHoleRenderer.addBlackHole(b.x, b.y, size * fout, lensEdge * fout, b.team.color);
+        BlackHoleRenderer.addBlackHole(b.x, b.y, size * fout, lensEdge * fout, blackHoleColor(b));
     }
 
     @Override
@@ -149,6 +112,10 @@ public class BlackHoleBulletType extends BulletType{
             Mathf.curve(b.time, 0f, growTime)
                 - Mathf.curve(b.time, b.lifetime - shrinkTime, b.lifetime)
         );
+    }
+
+    public Color blackHoleColor(Bullet b){
+        return color == null ? b.team.color : color;
     }
 
     @Override
@@ -170,9 +137,5 @@ public class BlackHoleBulletType extends BulletType{
         if(b.data instanceof SoundLoop loop){
             loop.stop();
         }
-    }
-
-    public static boolean checkType(BulletType type){ //Returns true for bullets immune to suction.
-        return immuneBulletTypes.contains(c -> c.isAssignableFrom(type.getClass()));
     }
 }

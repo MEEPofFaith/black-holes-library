@@ -51,6 +51,10 @@ public class BlackHoleBulletType extends BulletType{
         layer = Layer.effect + 0.03f;
     }
 
+    public BlackHoleBulletType(){
+        this(1f, 1f);
+    }
+
     @Override
     public void init(){
         super.init();

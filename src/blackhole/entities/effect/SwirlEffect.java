@@ -65,7 +65,6 @@ public class SwirlEffect extends Effect{
         this(lifetime, length, width, minRot, maxRot, true, lerp);
     }
 
-    //For json
     public SwirlEffect(){
         super();
     }

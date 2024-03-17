@@ -17,7 +17,7 @@ import static mindustry.Vars.*;
 
 public class BlackHoleAbility extends Ability{
     public float x, y;
-    public float reload = 2f;
+    public float damageInterval = 2f;
     /** If true, only activates when shooting. */
     public boolean whenShooting = false;
     public float warmupSpeed = 0.06f;
@@ -48,9 +48,9 @@ public class BlackHoleAbility extends Ability{
 
     @Override
     public void addStats(Table t){
-        t.add("[lightgray]" + Stat.range.localized() + ": [white]" + (suctionRadius / tilesize) + " " + StatUnit.blocks.localized());
+        t.add("[lightgray]" + Stat.range.localized() + ": [white]" + StatValues.fixValue(suctionRadius / tilesize) + " " + StatUnit.blocks.localized());
         t.row();
-        t.add("[lightgray]" + Stat.damage.localized() + ": [white]" + (damage / reload * 60f) + StatUnit.perSecond.localized());
+        t.add("[lightgray]" + Stat.damage.localized() + ": [white]" + StatValues.fixValue(damage * 60f / damageInterval) + StatUnit.perSecond.localized());
     }
 
     @Override
@@ -84,21 +84,21 @@ public class BlackHoleAbility extends Ability{
         if(scl < 0.01f) return;
 
         Tmp.v1.set(x, y).rotate(unit.rotation - 90f);
-        if((suctionTimer += Time.delta) >= reload){
+        if((suctionTimer += Time.delta) >= damageInterval){
             BlackHoleUtils.blackHoleUpdate(
                 unit.team, unit, Tmp.v1.x, Tmp.v1.y,
                 damage, bulletDamage,
                 damageRadius * scl, suctionRadius * scl,
                 repel, force, scaledForce, bulletForce, scaledBulletForce
             );
-            suctionTimer = 0f;
+            suctionTimer %= damageInterval;
         }
 
         if(swirlEffect != null && (effectTimer += Time.delta) >= swirlInterval){
             for(int i = 0; i < swirlEffects; i++){
                 swirlEffect.at(unit.x + Tmp.v1.x, unit.y + Tmp.v1.y, suctionRadius * (counterClockwise ? -1f : 1f), blackHoleColor(unit), unit);
             }
-            effectTimer = 0f;
+            effectTimer %= swirlInterval;
         }
     }
 

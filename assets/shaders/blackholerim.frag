@@ -1,6 +1,6 @@
 #define HIGHP
 
-#define MUL 4.0
+#define SCL 0.125
 
 uniform sampler2D u_texture;
 
@@ -32,15 +32,17 @@ void main() {
         float cX = blackhole.r;
         float cY = blackhole.g;
         float iR = blackhole.b;
+        float oR = blackhole.a;
+        float rad = iR + (oR - iR) * SCL;
 
         float dst = distance(blackhole.xy, coords);
         if(dst < iR){ //Inside, black
             gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
             return;
-        }else if(dst > iR * MUL){ //Outside, skip
+        }else if(dst > rad){ //Outside, skip
             continue;
         }else{ //Add color
-            float p = 1.0 - (dst - iR) / (iR * MUL - iR);
+            float p = 1.0 - (dst - iR) / (rad - iR);
             vec4 c1 = u_colors[i];
             c1.a = p;
 

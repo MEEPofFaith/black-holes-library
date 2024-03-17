@@ -107,6 +107,12 @@ public class BlackHoleRenderer{
 
     private void simplifiedDraw(){
         Draw.draw(Layer.max, () -> {
+            Draw.color(Color.black);
+            for(BlackHoleZone zone : zones){
+                Fill.circle(zone.x, zone.y, zone.inRadius);
+            }
+            Draw.color();
+
             Bloom bloom = renderer.bloom;
             if(bloom != null){
                 bloom.capture();
@@ -116,19 +122,13 @@ public class BlackHoleRenderer{
                 simplifiedRims();
             }
 
-            Draw.color(Color.black);
-            for(BlackHoleZone zone : zones){
-                Fill.circle(zone.x, zone.y, zone.inRadius);
-            }
-            Draw.color();
-
             zones.clear();
         });
     }
 
     private void simplifiedRims(){
         for(BlackHoleZone zone : zones){
-            float rad = zone.inRadius * 4;
+            float rad = Mathf.lerp(zone.inRadius, zone.outRadius, 0.125f);
             int vert = Lines.circleVertices(rad);
             float space = 360f / vert;
 

@@ -37,6 +37,8 @@ public class SwirlEffect extends Effect{
     public Color edgeColor;
     public Interp fallterp = Interp.pow2Out;
     public Interp spinterp = Interp.pow3Out;
+    /** Overrides spin direction from radius provided by bullet rotation. >1 for clockwise, <1 for counter-clockwise */
+    public float spinDirectionOverride = 0f;
 
     public SwirlEffect(float lifetime, float clipsize, Color edgeColor, int length, float width, float minRot, float maxRot, float minDst, float maxDst, boolean light, boolean lerp){
         super();
@@ -98,7 +100,8 @@ public class SwirlEffect extends Effect{
         int points = (int)Math.min(e.time, length);
         float width = Mathf.clamp(e.time / (e.lifetime - length)) * this.width;
         float size = width / points;
-        float baseRot = Mathf.randomSeed(e.id + 1, 360f), addRot = Mathf.randomSeed(e.id + 2, minRot, maxRot) * Mathf.sign(e.rotation);
+        float dir = spinDirectionOverride != 0 ? Mathf.sign(spinDirectionOverride) : Mathf.sign(e.rotation);
+        float baseRot = Mathf.randomSeed(e.id + 1, 360f), addRot = Mathf.randomSeed(e.id + 2, minRot, maxRot) * dir;
 
         float fout, lastAng = 0f;
         for(int i = 0; i < points; i++){

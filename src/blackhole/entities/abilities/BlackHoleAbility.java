@@ -13,6 +13,7 @@ import mindustry.type.*;
 public class BlackHoleAbility extends Ability{
     public float x, y;
     public float reload = 2f;
+    public boolean drawBlackHole = true;
     public float horizonRadius = -1f, lensingRadius = -1f;
     public float damageRadius = 6f, suctionRadius = 160f;
     public boolean repel = false;
@@ -44,6 +45,8 @@ public class BlackHoleAbility extends Ability{
 
     @Override
     public void draw(Unit unit){
+        if(!drawBlackHole) return;
+
         Tmp.v1.set(x, y).rotate(unit.rotation - 90f).add(unit);
         BlackHoleRenderer.addBlackHole(
             Tmp.v1.x, Tmp.v1.y,

@@ -1,17 +1,23 @@
 package blackhole.utils;
 
+import arc.func.*;
 import arc.math.*;
 import arc.math.geom.*;
 import arc.struct.*;
 import arc.util.*;
 import mindustry.content.*;
+import mindustry.core.*;
 import mindustry.entities.*;
 import mindustry.entities.bullet.*;
 import mindustry.game.*;
 import mindustry.gen.*;
 import mindustry.type.*;
 
+import static mindustry.Vars.*;
+
 public class BlackHoleUtils{
+    private static final IntSet collidedBlocks = new IntSet();
+
     /**
      * Add bullet types you want to be immune to suction to this Seq.
      * This Seq can also be referenced for anything else you do involving suction.
@@ -77,11 +83,12 @@ public class BlackHoleUtils{
     ){
         float x = source.x() + offsetX, y = source.y() + offsetY;
 
-        if(damage > 0f) Damage.damage(team, x, y, damageRadius, damage);
+        if(damage > 0f) completeDamage(team, x, y, damageRadius, damage);
 
         Units.nearbyEnemies(team, x - suctionRadius, y - suctionRadius, suctionRadius * 2f, suctionRadius * 2f, unit -> {
-            if(!unit.type.internal && !isUnitImmune(unit) && unit.hittable() && unit.within(x, y, suctionRadius) && source != unit){
-                Vec2 impulse = Tmp.v1.trns(unit.angleTo(x, y), force + (1f - unit.dst(x, y) / suctionRadius) * scaledForce);
+            float rad = suctionRadius + unit.hitSize / 2f;
+            if(!unit.type.internal && !isUnitImmune(unit) && unit.hittable() && unit.within(x, y, rad) && source != unit){
+                Vec2 impulse = Tmp.v1.trns(unit.angleTo(x, y), force + (1f - unit.dst(x, y) / rad) * scaledForce);
                 if(repel) impulse.rotate(180f);
                 unit.impulseNet(impulse);
             }
@@ -146,5 +153,39 @@ public class BlackHoleUtils{
         return immuneUnitTypes.contains(c -> c.isAssignableFrom(unit.type.getClass()))
             || immuneUnitComps.contains(c -> c.isAssignableFrom(unit.getClass()))
             || immuneUnits.contains(unit.type);
+    }
+
+    public static void completeDamage(Team team, float x, float y, float radius, float damage){
+        Units.nearbyEnemies(team, x - radius, y - radius, radius * 2f, radius * 2f, unit -> {
+            if(!unit.dead && unit.hittable() && unit.within(x, y, radius + unit.hitSize / 2f)){
+                unit.damage(damage);
+            }
+        });
+
+        trueEachBlock(x, y, radius, build -> {
+            if(build.team != team && !build.dead && build.block != null){
+                build.damage(damage);
+            }
+        });
+    }
+
+    public static void trueEachBlock(float wx, float wy, float range, Cons<Building> cons){
+        collidedBlocks.clear();
+        int tx = World.toTile(wx);
+        int ty = World.toTile(wy);
+
+        int tileRange = Mathf.floorPositive(range / tilesize);
+
+        for(int x = tx - tileRange - 2; x <= tx + tileRange + 2; x++){
+            for(int y = ty - tileRange - 2; y <= ty + tileRange + 2; y++){
+                if(Mathf.within(x * tilesize, y * tilesize, wx, wy, range)){
+                    Building other = world.build(x, y);
+                    if(other != null && !collidedBlocks.contains(other.pos())){
+                        cons.get(other);
+                        collidedBlocks.add(other.pos());
+                    }
+                }
+            }
+        }
     }
 }

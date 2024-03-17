@@ -31,6 +31,7 @@ public class BlackHoleAbility extends Ability{
     public @Nullable Effect swirlEffect = BlackHoleMod.defaultSwirlEffect;
     public float swirlInterval = 3f;
     public int swirlEffects = 4;
+    public boolean counterClockwise = false;
 
     protected float effectTimer;
     protected float suctionTimer;
@@ -66,7 +67,7 @@ public class BlackHoleAbility extends Ability{
 
         if(swirlEffect != null && (effectTimer += Time.delta) >= swirlInterval){
             for(int i = 0; i < swirlEffects; i++){
-                swirlEffect.at(unit.x + Tmp.v1.x, unit.y + Tmp.v1.y, suctionRadius, blackHoleColor(unit), unit);
+                swirlEffect.at(unit.x + Tmp.v1.x, unit.y + Tmp.v1.y, suctionRadius * (counterClockwise ? -1f : 1f), blackHoleColor(unit), unit);
             }
         }
     }

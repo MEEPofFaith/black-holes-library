@@ -36,6 +36,7 @@ public class BlackHoleBulletType extends BulletType{
     public @Nullable Effect swirlEffect = BlackHoleMod.defaultSwirlEffect;
     public float swirlInterval = 3f;
     public int swirlEffects = 4;
+    public boolean counterClockwise = false;
 
     public Sound loopSound = Sounds.spellLoop;
     public float loopSoundVolume = 2f;
@@ -100,7 +101,7 @@ public class BlackHoleBulletType extends BulletType{
         if(swirlEffect != null && swirlInterval > 0f && b.time <= b.lifetime - swirlEffect.lifetime){
             if(b.timer(0, swirlInterval)){
                 for(int i = 0; i < swirlEffects; i++){
-                    swirlEffect.at(b.x, b.y, suctionRadius, blackHoleColor(b), b);
+                    swirlEffect.at(b.x, b.y, suctionRadius * (counterClockwise ? -1f : 1f), blackHoleColor(b), b);
                 }
             }
         }

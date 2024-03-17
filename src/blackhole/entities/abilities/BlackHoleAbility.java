@@ -87,16 +87,21 @@ public class BlackHoleAbility extends Ability{
         if((suctionTimer += Time.delta) >= damageInterval){
             BlackHoleUtils.blackHoleUpdate(
                 unit.team, unit, Tmp.v1.x, Tmp.v1.y,
-                damage, bulletDamage,
                 damageRadius * scl, suctionRadius * scl,
+                damage, bulletDamage,
                 repel, force, scaledForce, bulletForce, scaledBulletForce
             );
             suctionTimer %= damageInterval;
         }
 
         if(swirlEffect != null && (effectTimer += Time.delta) >= swirlInterval){
+            Tmp.v1.add(unit);
             for(int i = 0; i < swirlEffects; i++){
-                swirlEffect.at(unit.x + Tmp.v1.x, unit.y + Tmp.v1.y, suctionRadius * (counterClockwise ? -1f : 1f), blackHoleColor(unit), unit);
+                swirlEffect.at(
+                    Tmp.v1.x, Tmp.v1.y,
+                    suctionRadius * (counterClockwise ? -1f : 1f),
+                    blackHoleColor(unit), unit
+                );
             }
             effectTimer %= swirlInterval;
         }

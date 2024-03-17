@@ -14,7 +14,7 @@ main: "blackhole.BlackHoleMod"
 description: "A library mod for rendering black holes."
 
 #the mod version
-version: 10
+version: 11
 
 #the minimum game build required to run this mod
 minGameVersion: 146

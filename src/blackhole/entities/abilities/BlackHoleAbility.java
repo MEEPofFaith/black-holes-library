@@ -2,6 +2,7 @@ package blackhole.entities.abilities;
 
 import arc.graphics.*;
 import arc.math.*;
+import arc.scene.ui.layout.*;
 import arc.util.*;
 import blackhole.*;
 import blackhole.graphics.*;
@@ -10,6 +11,9 @@ import mindustry.entities.*;
 import mindustry.entities.abilities.*;
 import mindustry.gen.*;
 import mindustry.type.*;
+import mindustry.world.meta.*;
+
+import static mindustry.Vars.*;
 
 public class BlackHoleAbility extends Ability{
     public float x, y;
@@ -41,6 +45,13 @@ public class BlackHoleAbility extends Ability{
     protected float effectTimer;
     protected float suctionTimer;
     protected float scl;
+
+    @Override
+    public void addStats(Table t){
+        t.add("[lightgray]" + Stat.range.localized() + ": [white]" + (suctionRadius / tilesize) + " " + StatUnit.blocks.localized());
+        t.row();
+        t.add("[lightgray]" + Stat.damage.localized() + ": [white]" + (damage / reload * 60f) + StatUnit.perSecond.localized());
+    }
 
     @Override
     public void init(UnitType type){
@@ -87,6 +98,7 @@ public class BlackHoleAbility extends Ability{
             for(int i = 0; i < swirlEffects; i++){
                 swirlEffect.at(unit.x + Tmp.v1.x, unit.y + Tmp.v1.y, suctionRadius * (counterClockwise ? -1f : 1f), blackHoleColor(unit), unit);
             }
+            effectTimer = 0f;
         }
     }
 

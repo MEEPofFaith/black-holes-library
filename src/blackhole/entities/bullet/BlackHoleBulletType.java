@@ -21,9 +21,18 @@ public class BlackHoleBulletType extends BulletType{
     public Effect swirlEffect = new SwirlEffect(90f, 8, 3f, 120f, 480f, true).layer(Layer.effect + 0.005f);
     public Sound loopSound = Sounds.spellLoop;
     public float loopSoundVolume = 2f;
-    public float suctionRadius = 160f, size = 6f, lensEdge = -1f, damageRadius = -1f;
-    public float force = 10f, scaledForce = 800f, bulletForce = 0.1f, scaledBulletForce = 1f;
+    public float horizonRadius = 6f, lensingRadius = -1f;
+    public float damageRadius = -1f, suctionRadius = 160f;
+    /** Base amount of force applied to units */
+    public float force = 10f;
+    /** Scaled amount of force applied to units. As units get closer to the center, more of scaledForce is added to force. */
+    public float scaledForce = 800f;
+    /** Base amount of force applied to bullets. */
+    public float bulletForce = 0.1f;
+    /** Scaled amount of force applied to bullets. As bullets get closer to the center, more of scaledForce is added to force. */
+    public float scaledBulletForce = 1f;
     public float bulletDamage = 10f;
+    /** Color of black hole and effects. If null, uses team color. */
     public @Nullable Color color = null;
     public float growTime = 10f, shrinkTime = -1f;
     public float swirlInterval = 3f;
@@ -43,11 +52,11 @@ public class BlackHoleBulletType extends BulletType{
     @Override
     public void init(){
         super.init();
-        if(lensEdge < 0f) lensEdge = suctionRadius;
+        if(lensingRadius < 0f) lensingRadius = suctionRadius;
         if(shrinkTime < 0f) shrinkTime = swirlEffect.lifetime;
-        if(damageRadius < 0f) damageRadius = size + 4f;
+        if(damageRadius < 0f) damageRadius = horizonRadius + 4f;
 
-        drawSize = Math.max(drawSize, lensEdge * 2f);
+        drawSize = Math.max(drawSize, lensingRadius * 2f);
     }
 
     @Override
@@ -99,7 +108,7 @@ public class BlackHoleBulletType extends BulletType{
     @Override
     public void draw(Bullet b){
         float fout = fout(b);
-        BlackHoleRenderer.addBlackHole(b.x, b.y, size * fout, lensEdge * fout, blackHoleColor(b));
+        BlackHoleRenderer.addBlackHole(b.x, b.y, horizonRadius * fout, lensingRadius * fout, blackHoleColor(b));
     }
 
     @Override

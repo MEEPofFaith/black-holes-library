@@ -14,8 +14,16 @@ public class BlackHoleAbility extends Ability{
     public float horizonRadius = 6f, lensingRadius = -1f;
     public float damageRadius = -1f, suctionRadius = 160f;
     public boolean repel = false;
-    public float force = 10f, scaledForce = 800f, bulletForce = 0.1f, scaledBulletForce = 1f;
+    /** Base amount of force applied to units */
+    public float force = 10f;
+    /** Scaled amount of force applied to units. As units get closer to the center, more of scaledForce is added to force. */
+    public float scaledForce = 800f;
+    /** Base amount of force applied to bullets. */
+    public float bulletForce = 0.1f;
+    /** Scaled amount of force applied to bullets. As bullets get closer to the center, more of scaledForce is added to force. */
+    public float scaledBulletForce = 1f;
     public float damage = 30f, bulletDamage = 10f;
+    /** Color of black hole and effects. If null, uses team color. */
     public @Nullable Color color = null;
 
     protected float timer;

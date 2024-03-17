@@ -65,6 +65,11 @@ public class SwirlEffect extends Effect{
         this(lifetime, length, width, minRot, maxRot, true, lerp);
     }
 
+    //For json
+    public SwirlEffect(){
+        super();
+    }
+
     public SwirlEffect setInterps(Interp fallterp, Interp spinterp){
         this.fallterp = fallterp;
         this.spinterp = spinterp;

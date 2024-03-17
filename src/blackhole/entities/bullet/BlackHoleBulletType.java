@@ -4,7 +4,7 @@ import arc.audio.*;
 import arc.graphics.*;
 import arc.math.*;
 import arc.util.*;
-import blackhole.entities.effect.*;
+import blackhole.*;
 import blackhole.graphics.*;
 import blackhole.utils.*;
 import mindustry.audio.*;
@@ -17,12 +17,9 @@ import mindustry.graphics.*;
 import static mindustry.Vars.*;
 
 public class BlackHoleBulletType extends BulletType{
-
-    public Effect swirlEffect = new SwirlEffect(90f, 8, 3f, 120f, 480f, true).layer(Layer.effect + 0.005f);
-    public Sound loopSound = Sounds.spellLoop;
-    public float loopSoundVolume = 2f;
     public float horizonRadius = 6f, lensingRadius = -1f;
     public float damageRadius = -1f, suctionRadius = 160f;
+    public boolean repel;
     /** Base amount of force applied to units */
     public float force = 10f;
     /** Scaled amount of force applied to units. As units get closer to the center, more of scaledForce is added to force. */
@@ -35,9 +32,13 @@ public class BlackHoleBulletType extends BulletType{
     /** Color of black hole and effects. If null, uses team color. */
     public @Nullable Color color = null;
     public float growTime = 10f, shrinkTime = -1f;
+
+    public @Nullable Effect swirlEffect = BlackHoleMod.defaultSwirlEffect;
     public float swirlInterval = 3f;
     public int swirlEffects = 4;
-    public boolean repel;
+
+    public Sound loopSound = Sounds.spellLoop;
+    public float loopSoundVolume = 2f;
 
     public BlackHoleBulletType(float speed, float damage){
         super(speed, damage);
@@ -96,7 +97,7 @@ public class BlackHoleBulletType extends BulletType{
     public void updateTrailEffects(Bullet b){
         super.updateTrailEffects(b);
 
-        if(swirlInterval > 0f && b.time <= b.lifetime - swirlEffect.lifetime){
+        if(swirlEffect != null && swirlInterval > 0f && b.time <= b.lifetime - swirlEffect.lifetime){
             if(b.timer(0, swirlInterval)){
                 for(int i = 0; i < swirlEffects; i++){
                     swirlEffect.at(b.x, b.y, suctionRadius, blackHoleColor(b), b);

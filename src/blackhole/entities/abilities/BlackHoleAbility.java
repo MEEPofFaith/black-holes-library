@@ -2,8 +2,10 @@ package blackhole.entities.abilities;
 
 import arc.graphics.*;
 import arc.util.*;
+import blackhole.*;
 import blackhole.graphics.*;
 import blackhole.utils.*;
+import mindustry.entities.*;
 import mindustry.entities.abilities.*;
 import mindustry.gen.*;
 import mindustry.type.*;
@@ -26,7 +28,12 @@ public class BlackHoleAbility extends Ability{
     /** Color of black hole and effects. If null, uses team color. */
     public @Nullable Color color = null;
 
-    protected float timer;
+    public @Nullable Effect swirlEffect = BlackHoleMod.defaultSwirlEffect;
+    public float swirlInterval = 3f;
+    public int swirlEffects = 4;
+
+    protected float effectTimer;
+    protected float suctionTimer;
 
     @Override
     public void init(UnitType type){
@@ -40,21 +47,31 @@ public class BlackHoleAbility extends Ability{
         BlackHoleRenderer.addBlackHole(
             Tmp.v1.x, Tmp.v1.y,
             horizonRadius, lensingRadius,
-            color == null ? unit.team.color : color
+            blackHoleColor(unit)
         );
     }
 
     @Override
     public void update(Unit unit){
-        if((timer += Time.delta) >= reload){
-            Tmp.v1.set(x, y).rotate(unit.rotation - 90f);
+        Tmp.v1.set(x, y).rotate(unit.rotation - 90f);
+        if((suctionTimer += Time.delta) >= reload){
             BlackHoleUtils.blackHoleUpdate(
                 unit.team, unit, Tmp.v1.x, Tmp.v1.y,
                 damage, bulletDamage,
                 damageRadius, suctionRadius,
                 repel, force, scaledForce, bulletForce, scaledBulletForce
             );
-            timer = 0f;
+            suctionTimer = 0f;
         }
+
+        if(swirlEffect != null && (effectTimer += Time.delta) >= swirlInterval){
+            for(int i = 0; i < swirlEffects; i++){
+                swirlEffect.at(unit.x + Tmp.v1.x, unit.y + Tmp.v1.y, suctionRadius, blackHoleColor(unit), unit);
+            }
+        }
+    }
+
+    public Color blackHoleColor(Unit unit){
+        return color == null ? unit.team.color : color;
     }
 }

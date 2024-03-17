@@ -1,6 +1,7 @@
 package blackhole.entities.abilities;
 
 import arc.graphics.*;
+import arc.math.*;
 import arc.util.*;
 import blackhole.*;
 import blackhole.graphics.*;
@@ -13,6 +14,9 @@ import mindustry.type.*;
 public class BlackHoleAbility extends Ability{
     public float x, y;
     public float reload = 2f;
+    /** If true, only activates when shooting. */
+    public boolean whenShooting = false;
+    public float warmupSpeed = 0.06f;
     public boolean drawBlackHole = true;
     public float horizonRadius = -1f, lensingRadius = -1f;
     public float damageRadius = 6f, suctionRadius = 160f;
@@ -36,33 +40,44 @@ public class BlackHoleAbility extends Ability{
 
     protected float effectTimer;
     protected float suctionTimer;
+    protected float scl;
 
     @Override
     public void init(UnitType type){
         if(horizonRadius < 0f) horizonRadius = damageRadius;
         if(lensingRadius < 0f) lensingRadius = suctionRadius;
+        if(!whenShooting) scl = 1f;
     }
 
     @Override
     public void draw(Unit unit){
-        if(!drawBlackHole) return;
+        if(!drawBlackHole || scl < 0.01f) return;
 
         Tmp.v1.set(x, y).rotate(unit.rotation - 90f).add(unit);
         BlackHoleRenderer.addBlackHole(
             Tmp.v1.x, Tmp.v1.y,
-            horizonRadius, lensingRadius,
+            horizonRadius * scl, lensingRadius * scl,
             blackHoleColor(unit)
         );
     }
 
     @Override
     public void update(Unit unit){
+        boolean active = unit.isShooting || !whenShooting;
+        if(active){
+            scl = Mathf.lerpDelta(scl, 1f, warmupSpeed);
+        }else{
+            scl = Mathf.lerpDelta(scl, 0f, warmupSpeed);
+        }
+
+        if(scl < 0.01f) return;
+
         Tmp.v1.set(x, y).rotate(unit.rotation - 90f);
         if((suctionTimer += Time.delta) >= reload){
             BlackHoleUtils.blackHoleUpdate(
                 unit.team, unit, Tmp.v1.x, Tmp.v1.y,
                 damage, bulletDamage,
-                damageRadius, suctionRadius,
+                damageRadius * scl, suctionRadius * scl,
                 repel, force, scaledForce, bulletForce, scaledBulletForce
             );
             suctionTimer = 0f;

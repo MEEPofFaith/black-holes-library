@@ -105,7 +105,7 @@ public class BlackHoleBulletType extends BulletType{
         if(swirlEffect != null && swirlInterval > 0f && b.time <= b.lifetime - swirlEffect.lifetime){
             if(b.timer(0, swirlInterval)){
                 for(int i = 0; i < swirlEffects; i++){
-                    swirlEffect.at(b.x, b.y, suctionRadius * (counterClockwise ? -1f : 1f), blackHoleColor(b), b);
+                    swirlEffect.at(b.x, b.y, suctionRadius * (counterClockwise ? -1f : 1f) * fout(b), blackHoleColor(b), b);
                 }
             }
         }

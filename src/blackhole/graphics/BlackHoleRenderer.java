@@ -59,12 +59,12 @@ public class BlackHoleRenderer{
     }
 
     private void advancedDraw(){
-        Draw.draw(Layer.min + 0.01f, () -> {
+        Draw.draw(BHLayer.begin, () -> {
             buffer.resize(graphics.getWidth(), graphics.getHeight());
             buffer.begin();
         });
 
-        Draw.draw(Layer.max, () -> {
+        Draw.draw(BHLayer.end, () -> {
             buffer.end();
 
             if(zones.size >= BShaders.maxCount) BShaders.createBlackHoleShaders();

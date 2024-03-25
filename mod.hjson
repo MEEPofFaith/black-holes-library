@@ -24,3 +24,6 @@ java: true
 
 #no content
 hidden: true
+
+#mod's repo on github
+repo: MEEPofFaith/black-holes-library

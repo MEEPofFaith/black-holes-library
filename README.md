@@ -2,13 +2,14 @@
 
 This is a library mod used for the rendering of black holes.
 
-## Why this mod?
+## Warning
 
-While it would be really easy to just take my black hole renderer and copy it into other mods, it'll encounter the problem of multiple frame buffers starting on the same layer, thus causing the game to crash.
+**Do not just copy this mod's code into your mod.**
+While it would be really easy to just take my black hole renderer and copy it into other mods, it'll encounter the problem of multiple frame buffers starting on the same layer, thus **causing the game to crash**.
 
-By using a singular library mod, all mods use my black hole renderer will send their data to the same renderer and thus there are no conflicts.
+By using a singular library mod, all mods would use and send data to the same renderer, thus avoiding conflicts.
 
-Note that mods that use this must depend on `MEEPofFaith/MindustryBlackHoleRenderer` and that this mod must be installed so that other mods can use it. **Don't forget to also add `black-hole-renderer` to your `dependncies` in `mod.json`**
+Note that mods that use this must depend on `MEEPofFaith/MindustryBlackHoleRenderer` and that this mod must be installed so that other mods can use it. **Don't forget to also add `black-hole-renderer` to your `dependncies` in `mod.json` to prevent your mod from loading in the case that this isn't installed, else it will crash.**
 
 ## How to use (Java)
 

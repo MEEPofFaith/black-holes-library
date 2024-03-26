@@ -2,6 +2,7 @@ package blackhole.entities.abilities;
 
 import arc.graphics.*;
 import arc.math.*;
+import arc.math.geom.*;
 import arc.scene.ui.layout.*;
 import arc.util.*;
 import blackhole.*;
@@ -16,6 +17,8 @@ import mindustry.world.meta.*;
 import static mindustry.Vars.*;
 
 public class BlackHoleAbility extends Ability{
+    protected static Vec2 vec = new Vec2();
+    
     public float x, y;
     public float damageInterval = 2f;
     /** If true, only activates when shooting. */
@@ -64,9 +67,9 @@ public class BlackHoleAbility extends Ability{
     public void draw(Unit unit){
         if(!drawBlackHole || scl < 0.01f) return;
 
-        Tmp.v1.set(x, y).rotate(unit.rotation - 90f).add(unit);
+        vec.set(x, y).rotate(unit.rotation - 90f).add(unit);
         BlackHoleRenderer.addBlackHole(
-            Tmp.v1.x, Tmp.v1.y,
+            vec.x, vec.y,
             horizonRadius * scl, lensingRadius * scl,
             blackHoleColor(unit)
         );
@@ -83,10 +86,10 @@ public class BlackHoleAbility extends Ability{
 
         if(scl < 0.01f) return;
 
-        Tmp.v1.set(x, y).rotate(unit.rotation - 90f);
+        vec.set(x, y).rotate(unit.rotation - 90f);
         if((suctionTimer += Time.delta) >= damageInterval){
             BlackHoleUtils.blackHoleUpdate(
-                unit.team, unit, Tmp.v1.x, Tmp.v1.y,
+                unit.team, unit, vec.x, vec.y,
                 damageRadius * scl, suctionRadius * scl,
                 damage, bulletDamage,
                 repel, force, scaledForce, bulletForce, scaledBulletForce
@@ -95,10 +98,10 @@ public class BlackHoleAbility extends Ability{
         }
 
         if(swirlEffect != null && (effectTimer += Time.delta) >= swirlInterval){
-            Tmp.v1.add(unit);
+            vec.add(unit);
             for(int i = 0; i < swirlEffects; i++){
                 swirlEffect.at(
-                    Tmp.v1.x, Tmp.v1.y,
+                    vec.x, vec.y,
                     suctionRadius * (counterClockwise ? -1f : 1f),
                     blackHoleColor(unit), unit
                 );

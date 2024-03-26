@@ -4,7 +4,7 @@ import arc.audio.*;
 import arc.graphics.*;
 import arc.math.*;
 import arc.util.*;
-import blackhole.*;
+import blackhole.entities.effect.*;
 import blackhole.graphics.*;
 import blackhole.utils.*;
 import mindustry.audio.*;
@@ -33,7 +33,7 @@ public class BlackHoleBulletType extends BulletType{
     public @Nullable Color color = null;
     public float growTime = 10f, shrinkTime = -1f;
 
-    public @Nullable Effect swirlEffect = BlackHoleMod.defaultSwirlEffect;
+    public Effect swirlEffect = new SwirlEffect();
     public float swirlInterval = 3f;
     public int swirlEffects = 4;
     public boolean counterClockwise = false;
@@ -102,7 +102,7 @@ public class BlackHoleBulletType extends BulletType{
     public void updateTrailEffects(Bullet b){
         super.updateTrailEffects(b);
 
-        if(swirlEffect != null && swirlInterval > 0f && b.time <= b.lifetime - swirlEffect.lifetime){
+        if(swirlInterval > 0f && b.time <= b.lifetime - swirlEffect.lifetime){
             if(b.timer(0, swirlInterval)){
                 for(int i = 0; i < swirlEffects; i++){
                     swirlEffect.at(b.x, b.y, suctionRadius * (counterClockwise ? -1f : 1f) * fout(b), blackHoleColor(b), b);

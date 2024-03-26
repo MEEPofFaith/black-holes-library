@@ -58,6 +58,7 @@ public class SwirlEffect extends Effect{
         this.lerp = lerp;
 
         followParent = rotWithParent = true;
+        layer = Layer.effect + 0.005f;
     }
 
     public SwirlEffect(float lifetime, Color edgeColor, int length, float width, float minRot, float maxRot, float minDst, float maxDst, boolean light, boolean lerp){
@@ -73,7 +74,7 @@ public class SwirlEffect extends Effect{
     }
 
     public SwirlEffect(){
-        super();
+        this(90f, 8, 3f, 120f, 480f, true);
     }
 
     public SwirlEffect setInterps(Interp fallterp, Interp spinterp){

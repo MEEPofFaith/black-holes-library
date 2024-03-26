@@ -5,7 +5,7 @@ import arc.math.*;
 import arc.math.geom.*;
 import arc.scene.ui.layout.*;
 import arc.util.*;
-import blackhole.*;
+import blackhole.entities.effect.*;
 import blackhole.graphics.*;
 import blackhole.utils.*;
 import mindustry.entities.*;
@@ -40,7 +40,7 @@ public class BlackHoleAbility extends Ability{
     /** Color of black hole and effects. If null, uses team color. */
     public @Nullable Color color = null;
 
-    public @Nullable Effect swirlEffect = BlackHoleMod.defaultSwirlEffect;
+    public Effect swirlEffect = new SwirlEffect();
     public float swirlInterval = 3f;
     public int swirlEffects = 4;
     public boolean counterClockwise = false;
@@ -97,7 +97,7 @@ public class BlackHoleAbility extends Ability{
             suctionTimer %= damageInterval;
         }
 
-        if(swirlEffect != null && (effectTimer += Time.delta) >= swirlInterval){
+        if((effectTimer += Time.delta) >= swirlInterval){
             vec.add(unit);
             for(int i = 0; i < swirlEffects; i++){
                 swirlEffect.at(

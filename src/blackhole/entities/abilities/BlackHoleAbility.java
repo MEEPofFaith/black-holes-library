@@ -39,6 +39,8 @@ public class BlackHoleAbility extends Ability{
     public float damage = 30f, bulletDamage = 10f;
     /** Color of black hole and effects. If null, uses team color. */
     public @Nullable Color color = null;
+    public float starWidth = -1, starHeight = -1, starAngle;
+    public @Nullable Color starIn, starOut;
 
     public Effect swirlEffect = new SwirlEffect();
     public float swirlInterval = 3f;
@@ -61,6 +63,7 @@ public class BlackHoleAbility extends Ability{
         if(horizonRadius < 0f) horizonRadius = damageRadius;
         if(lensingRadius < 0f) lensingRadius = suctionRadius;
         if(!whenShooting) scl = 1f;
+        if(starWidth > 0 && starHeight < 0) starHeight = starWidth / 2;
     }
 
     @Override
@@ -71,8 +74,15 @@ public class BlackHoleAbility extends Ability{
         BlackHoleRenderer.addBlackHole(
             vec.x, vec.y,
             horizonRadius * scl, lensingRadius * scl,
-            blackHoleColor(unit)
+            getColor(unit, color)
         );
+        if(starWidth > 0){
+            BlackHoleRenderer.addStar(
+                vec.x, vec.y,
+                starWidth * scl, starHeight * scl, starAngle,
+                getColor(unit, starIn), getColor(unit, starOut)
+            );
+        }
     }
 
     @Override
@@ -103,14 +113,14 @@ public class BlackHoleAbility extends Ability{
                 swirlEffect.at(
                     vec.x, vec.y,
                     suctionRadius * (counterClockwise ? -1f : 1f),
-                    blackHoleColor(unit), unit
+                    getColor(unit, color), unit
                 );
             }
             effectTimer %= swirlInterval;
         }
     }
 
-    public Color blackHoleColor(Unit unit){
+    public Color getColor(Unit unit, Color color){
         return color == null ? unit.team.color : color;
     }
 }

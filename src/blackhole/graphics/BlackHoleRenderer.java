@@ -18,14 +18,15 @@ import static mindustry.Vars.*;
  * @author MEEPofFaith
  * */
 public class BlackHoleRenderer{
-    private final Seq<BlackHoleZone> zones = new Seq<>(BlackHoleZone.class);
+    private final Seq<BlackHoleZone> zones = new Seq<>();
+    private final Seq<BlackHoleStar> stars = new Seq<>();
     private static BlackHoleRenderer bRenderer;
     private boolean advanced = true;
 
     private FrameBuffer buffer;
 
     protected BlackHoleRenderer(boolean advanced){
-        BShaders.createBlackHoleShaders();
+        BHShaders.createBlackHoleShaders();
         advanced(advanced);
 
         Events.run(Trigger.draw, () -> {
@@ -55,7 +56,15 @@ public class BlackHoleRenderer{
      * @param color color of the glowing rim
      */
     public static void addBlackHole(float x, float y, float inRadius, float outRadius, Color color){
-        bRenderer.add(x, y, inRadius, outRadius, color);
+        bRenderer.addBH(x, y, inRadius, outRadius, color);
+    }
+
+    public static void addStar(float x, float y, float w, float h, float angleOffset, Color in, Color out){
+        bRenderer.addS(x, y, w, h, angleOffset, in, out);
+    }
+
+    public static void addStar(float x, float y, float w, float h, Color in, Color out){
+        addStar(x, y, w, h, 0, in, out);
     }
 
     private void advancedDraw(){
@@ -67,7 +76,7 @@ public class BlackHoleRenderer{
         Draw.draw(BHLayer.end, () -> {
             buffer.end();
 
-            if(zones.size >= BShaders.maxCount) BShaders.createBlackHoleShaders();
+            if(zones.size >= BHShaders.maxCount) BHShaders.createBlackHoleShaders();
 
             float[] blackholes = new float[zones.size * 4];
             float[] colors = new float[zones.size * 4];
@@ -84,11 +93,11 @@ public class BlackHoleRenderer{
                 colors[i * 4 + 2] = Tmp.c1.b;
                 colors[i * 4 + 3] = Tmp.c1.a;
             }
-            BShaders.lensingShader.blackHoles = blackholes;
-            buffer.blit(BShaders.lensingShader);
+            BHShaders.lensingShader.blackHoles = blackholes;
+            buffer.blit(BHShaders.lensingShader);
 
-            BShaders.rimShader.blackHoles = blackholes;
-            BShaders.rimShader.colors = colors;
+            BHShaders.rimShader.blackHoles = blackholes;
+            BHShaders.rimShader.colors = colors;
             buffer.begin();
             Draw.rect();
             buffer.end();
@@ -96,10 +105,12 @@ public class BlackHoleRenderer{
             Bloom bloom = renderer.bloom;
             if(bloom != null){
                 bloom.capture();
-                buffer.blit(BShaders.rimShader);
+                buffer.blit(BHShaders.rimShader);
+                drawStars();
                 bloom.render();
             }else{
-                buffer.blit(BShaders.rimShader);
+                buffer.blit(BHShaders.rimShader);
+                drawStars();
             }
             zones.clear();
         });
@@ -107,20 +118,22 @@ public class BlackHoleRenderer{
 
     private void simplifiedDraw(){
         Draw.draw(Layer.max, () -> {
-            Bloom bloom = renderer.bloom;
-            if(bloom != null){
-                bloom.capture();
-                simplifiedRims();
-                bloom.render();
-            }else{
-                simplifiedRims();
-            }
-
             Draw.color(Color.black);
             for(BlackHoleZone zone : zones){
                 Fill.circle(zone.x, zone.y, zone.inRadius);
             }
             Draw.color();
+
+            Bloom bloom = renderer.bloom;
+            if(bloom != null){
+                bloom.capture();
+                simplifiedRims();
+                drawStars();
+                bloom.render();
+            }else{
+                simplifiedRims();
+                drawStars();
+            }
 
             zones.clear();
         });
@@ -150,6 +163,13 @@ public class BlackHoleRenderer{
         }
     }
 
+    private void drawStars(){
+        for(BlackHoleStar star : stars){
+            BHDrawf.drawStar(star.x, star.y, star.w, star.h, star.angleOffset, star.inColor, star.outColor);
+        }
+        stars.clear();
+    }
+
     private void advanced(boolean advanced){
         this.advanced = advanced;
         if(advanced){
@@ -159,7 +179,7 @@ public class BlackHoleRenderer{
         }
     }
 
-    private void add(float x, float y, float inRadius, float outRadius, Color color){
+    private void addBH(float x, float y, float inRadius, float outRadius, Color color){
         if(inRadius > outRadius || outRadius <= 0) return;
 
         float res = Color.toFloatBits(color.r, color.g, color.b, 1);
@@ -167,8 +187,14 @@ public class BlackHoleRenderer{
         zones.add(new BlackHoleZone(x, y, res, inRadius, outRadius));
     }
 
+    private void addS(float x, float y, float w, float h, float angleOffset, Color in, Color out){
+        if(w <= 0 || h <= 0) return;
+
+        stars.add(new BlackHoleStar(x, y, w, h, angleOffset, in.toFloatBits(), out.toFloatBits()));
+    }
+
     private static class BlackHoleZone{
-        public float x, y, color, inRadius, outRadius;
+        float x, y, color, inRadius, outRadius;
 
         public BlackHoleZone(float x, float y, float color, float inRadius, float outRadius){
             this.x = x;
@@ -177,13 +203,20 @@ public class BlackHoleRenderer{
             this.inRadius = inRadius;
             this.outRadius = outRadius;
         }
+    }
 
-        public void set(float x, float y, float color, float inRadius, float outRadius){
+
+    private static class BlackHoleStar{
+        float x, y, w, h, angleOffset, inColor, outColor;
+
+        public BlackHoleStar(float x, float y, float w, float h, float angleOffset, float inColor, float outColor){
             this.x = x;
             this.y = y;
-            this.color = color;
-            this.inRadius = inRadius;
-            this.outRadius = outRadius;
+            this.w = w;
+            this.h = h;
+            this.angleOffset = angleOffset;
+            this.inColor = inColor;
+            this.outColor = outColor;
         }
     }
 }

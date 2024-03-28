@@ -6,7 +6,7 @@ import arc.graphics.gl.*;
 import static arc.Core.*;
 import static mindustry.Vars.*;
 
-public class BShaders{
+public class BHShaders{
     public static int maxCount = 4;
     public static LensingShader lensingShader;
     public static RimShader rimShader;

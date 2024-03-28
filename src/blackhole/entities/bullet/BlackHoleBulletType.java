@@ -12,7 +12,6 @@ import mindustry.content.*;
 import mindustry.entities.*;
 import mindustry.entities.bullet.*;
 import mindustry.gen.*;
-import mindustry.graphics.*;
 
 import static mindustry.Vars.*;
 
@@ -32,6 +31,8 @@ public class BlackHoleBulletType extends BulletType{
     /** Color of black hole and effects. If null, uses team color. */
     public @Nullable Color color = null;
     public float growTime = 10f, shrinkTime = -1f;
+    public float starWidth = -1, starHeight = -1, starAngle;
+    public @Nullable Color starIn, starOut;
 
     public Effect swirlEffect = new SwirlEffect();
     public float swirlInterval = 3f;
@@ -48,7 +49,7 @@ public class BlackHoleBulletType extends BulletType{
         pierce = true;
         shootEffect = smokeEffect = Fx.none;
         despawnEffect = Fx.none;
-        layer = Layer.effect + 0.03f;
+        layer = BHLayer.end + 0.01f;
     }
 
     public BlackHoleBulletType(){
@@ -61,6 +62,7 @@ public class BlackHoleBulletType extends BulletType{
         if(lensingRadius < 0f) lensingRadius = suctionRadius;
         if(shrinkTime < 0f) shrinkTime = swirlEffect.lifetime;
         if(horizonRadius < 0f) horizonRadius = damageRadius;
+        if(starWidth > 0 && starHeight < 0) starHeight = starWidth / 2;
 
         drawSize = Math.max(drawSize, lensingRadius * 2f);
     }
@@ -105,7 +107,7 @@ public class BlackHoleBulletType extends BulletType{
         if(swirlInterval > 0f && b.time <= b.lifetime - swirlEffect.lifetime){
             if(b.timer(0, swirlInterval)){
                 for(int i = 0; i < swirlEffects; i++){
-                    swirlEffect.at(b.x, b.y, suctionRadius * (counterClockwise ? -1f : 1f) * fout(b), blackHoleColor(b), b);
+                    swirlEffect.at(b.x, b.y, suctionRadius * (counterClockwise ? -1f : 1f) * fout(b), getColor(b, color), b);
                 }
             }
         }
@@ -114,7 +116,18 @@ public class BlackHoleBulletType extends BulletType{
     @Override
     public void draw(Bullet b){
         float fout = fout(b);
-        BlackHoleRenderer.addBlackHole(b.x, b.y, horizonRadius * fout, lensingRadius * fout, blackHoleColor(b));
+        BlackHoleRenderer.addBlackHole(
+            b.x, b.y,
+            horizonRadius * fout, lensingRadius * fout,
+            getColor(b, color)
+        );
+        if(starWidth > 0){
+            BlackHoleRenderer.addStar(
+                b.x, b.y,
+                starWidth * fout, starHeight * fout, starAngle,
+                getColor(b, starIn), getColor(b, starOut)
+            );
+        }
     }
 
     @Override
@@ -129,7 +142,7 @@ public class BlackHoleBulletType extends BulletType{
         );
     }
 
-    public Color blackHoleColor(Bullet b){
+    public Color getColor(Bullet b, Color color){
         return color == null ? b.team.color : color;
     }
 

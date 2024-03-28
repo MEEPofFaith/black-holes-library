@@ -37,7 +37,7 @@ public class SwirlEffect extends Effect{
     public float lightOpacity = 1f;
     /** If true, particle fades from edgeColor to effect color. Else, the particle is constantly the effect color. */
     public boolean lerp;
-    public Color edgeColor;
+    public @Nullable Color edgeColor;
     public Interp fallterp = Interp.pow2Out;
     public Interp spinterp = Interp.pow3Out;
     /** Overrides spin direction from radius provided by bullet rotation. >1 for clockwise, <1 for counter-clockwise */

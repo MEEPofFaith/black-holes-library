@@ -5,6 +5,7 @@ import arc.math.*;
 import arc.math.geom.*;
 import arc.struct.*;
 import arc.util.*;
+import blackhole.entities.bullet.*;
 import mindustry.content.*;
 import mindustry.core.*;
 import mindustry.entities.*;
@@ -26,7 +27,8 @@ public class BlackHoleUtils{
         ContinuousBulletType.class,
         LaserBulletType.class,
         SapBulletType.class,
-        ShrapnelBulletType.class
+        ShrapnelBulletType.class,
+        BlackHoleBulletType.class
     );
 
     /**

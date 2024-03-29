@@ -65,6 +65,7 @@ public class BlackHoleAbility extends Ability{
         if(lensingRadius < 0f) lensingRadius = suctionRadius;
         if(!whenShooting) scl = 1f;
         if(starWidth > 0 && starHeight < 0) starHeight = starWidth / 2;
+        BlackHoleUtils.immuneUnits.add(type);
     }
 
     @Override

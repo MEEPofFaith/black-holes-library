@@ -23,7 +23,7 @@ public class BlackHoleUtils{
      * Add bullet types you want to be immune to suction to this Seq.
      * This Seq can also be referenced for anything else you do involving suction.
      */
-    public static final Seq<Class<?>> immuneBulletTypes = Seq.with(
+    public static final ObjectSet<Class<?>> immuneBulletTypes = ObjectSet.with(
         ContinuousBulletType.class,
         LaserBulletType.class,
         SapBulletType.class,
@@ -35,19 +35,19 @@ public class BlackHoleUtils{
      * Add specific bullets you want to be immune to suction to this Seq.
      * This Seq can also be referenced for anything else you do involving suction.
      */
-    public static final Seq<BulletType> immuneBullets = new Seq<>();
+    public static final ObjectSet<BulletType> immuneBullets = new ObjectSet<>();
 
     /**
      * Add unit types you want to be immune to suction to this Seq.
      * This Seq can also be referenced for anything else you do involving suction.
      */
-    public static final Seq<Class<?>> immuneUnitTypes = new Seq<>();
+    public static final ObjectSet<Class<?>> immuneUnitTypes = new ObjectSet<>();
 
     /**
      * Add unit components you want to be immune to suction to this Seq.
      * This Seq can also be referenced for anything else you do involving suction.
      */
-    public static final Seq<Class<?>> immuneUnitComps = Seq.with(
+    public static final ObjectSet<Class<?>> immuneUnitComps = ObjectSet.with(
         BlockUnitUnit.class
     );
 
@@ -56,7 +56,7 @@ public class BlackHoleUtils{
      * Add specific units you want to be immune to suction to this Seq.
      * This Seq can also be referenced for anything else you do involving suction.
      */
-    public static final Seq<UnitType> immuneUnits = Seq.with(
+    public static final ObjectSet<UnitType> immuneUnits = ObjectSet.with(
         UnitTypes.block
     );
 
@@ -146,14 +146,14 @@ public class BlackHoleUtils{
 
     /** @return Whether the bullet type is immune to suction. */
     public static boolean isBulletImmune(BulletType type){
-        return immuneBulletTypes.contains(c -> c.isAssignableFrom(type.getClass()))
+        return immuneBulletTypes.toSeq().contains(c -> c.isAssignableFrom(type.getClass()))
             || immuneBullets.contains(type);
     }
 
     /** @return Whether the unit type is immune to suction. */
     public static boolean isUnitImmune(Unit unit){
-        return immuneUnitTypes.contains(c -> c.isAssignableFrom(unit.type.getClass()))
-            || immuneUnitComps.contains(c -> c.isAssignableFrom(unit.getClass()))
+        return immuneUnitTypes.toSeq().contains(c -> c.isAssignableFrom(unit.type.getClass()))
+            || immuneUnitComps.toSeq().contains(c -> c.isAssignableFrom(unit.getClass()))
             || immuneUnits.contains(unit.type);
     }
 

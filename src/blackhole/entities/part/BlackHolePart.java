@@ -13,6 +13,8 @@ public class BlackHolePart extends DrawPart{
     /** Progress function for scaling. */
     public PartProgress growProgress = PartProgress.warmup;
     public float x, y, size, sizeTo, edge, edgeTo;
+    public float starWidth = -1, starHeight = -1, starAngle;
+    public @Nullable Color starIn, starOut;
     public float moveX, moveY;
     public Color color = Pal.accent;
     public @Nullable Color colorTo;

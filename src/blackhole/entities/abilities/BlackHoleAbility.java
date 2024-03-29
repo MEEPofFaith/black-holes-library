@@ -14,6 +14,7 @@ import mindustry.gen.*;
 import mindustry.type.*;
 import mindustry.world.meta.*;
 
+import static blackhole.graphics.BHDrawf.*;
 import static mindustry.Vars.*;
 
 public class BlackHoleAbility extends Ability{
@@ -74,13 +75,13 @@ public class BlackHoleAbility extends Ability{
         BlackHoleRenderer.addBlackHole(
             vec.x, vec.y,
             horizonRadius * scl, lensingRadius * scl,
-            getColor(unit, color)
+            teamColor(unit, color)
         );
         if(starWidth > 0){
             BlackHoleRenderer.addStar(
                 vec.x, vec.y,
                 starWidth * scl, starHeight * scl, starAngle,
-                getColor(unit, starIn), getColor(unit, starOut)
+                teamColor(unit, starIn), teamColor(unit, starOut)
             );
         }
     }
@@ -113,14 +114,10 @@ public class BlackHoleAbility extends Ability{
                 swirlEffect.at(
                     vec.x, vec.y,
                     suctionRadius * (counterClockwise ? -1f : 1f),
-                    getColor(unit, color), unit
+                    teamColor(unit, color), unit
                 );
             }
             effectTimer %= swirlInterval;
         }
-    }
-
-    public Color getColor(Unit unit, Color color){
-        return color == null ? unit.team.color : color;
     }
 }

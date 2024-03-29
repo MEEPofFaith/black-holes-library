@@ -7,6 +7,8 @@ import mindustry.gen.*;
 import mindustry.world.*;
 import mindustry.world.draw.*;
 
+import static blackhole.graphics.BHDrawf.teamColor;
+
 public class DrawBlackHole extends DrawBlock{
     public float x, y, size, edge;
     public @Nullable Color color;
@@ -28,13 +30,13 @@ public class DrawBlackHole extends DrawBlock{
         BlackHoleRenderer.addBlackHole(
             build.x + x, build.y + y,
             size * scl, edge * scl,
-            getColor(build, color)
+            teamColor(build, color)
         );
         if(starWidth > 0){
             BlackHoleRenderer.addStar(
                 build.x + x, build.y + y,
                 starWidth * scl, starHeight * scl, starAngle,
-                getColor(build, starIn), getColor(build, starOut)
+                teamColor(build, starIn), teamColor(build, starOut)
             );
         }
     }
@@ -42,9 +44,5 @@ public class DrawBlackHole extends DrawBlock{
     @Override
     public void load(Block block){
         if(starWidth > 0 && starHeight < 0) starHeight = starWidth / 2;
-    }
-
-    public Color getColor(Building build, Color color){
-        return color == null ? build.team.color : color;
     }
 }

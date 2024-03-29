@@ -1,11 +1,17 @@
 package blackhole.graphics;
 
+import arc.graphics.*;
 import arc.graphics.g2d.*;
 import arc.util.*;
+import mindustry.gen.*;
 
 import static arc.math.Mathf.*;
 
 public class BHDrawf{
+    public static Color teamColor(Teamc entity, Color color){
+        return color == null ? entity.team().color : color;
+    }
+
     public static void drawStar(float x, float y, float w, float h, float angleOffset, float centerColor, float edgeColor){
         int sides = Lines.circleVertices(w + h) / 4 * 4; //Ensure multiple of 4
         float space = 360f / sides;

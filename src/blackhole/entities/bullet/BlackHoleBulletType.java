@@ -13,6 +13,7 @@ import mindustry.entities.*;
 import mindustry.entities.bullet.*;
 import mindustry.gen.*;
 
+import static blackhole.graphics.BHDrawf.teamColor;
 import static mindustry.Vars.*;
 
 public class BlackHoleBulletType extends BulletType{
@@ -107,7 +108,7 @@ public class BlackHoleBulletType extends BulletType{
         if(swirlInterval > 0f && b.time <= b.lifetime - swirlEffect.lifetime){
             if(b.timer(0, swirlInterval)){
                 for(int i = 0; i < swirlEffects; i++){
-                    swirlEffect.at(b.x, b.y, suctionRadius * (counterClockwise ? -1f : 1f) * fout(b), getColor(b, color), b);
+                    swirlEffect.at(b.x, b.y, suctionRadius * (counterClockwise ? -1f : 1f) * fout(b), teamColor(b, color), b);
                 }
             }
         }
@@ -119,13 +120,13 @@ public class BlackHoleBulletType extends BulletType{
         BlackHoleRenderer.addBlackHole(
             b.x, b.y,
             horizonRadius * fout, lensingRadius * fout,
-            getColor(b, color)
+            teamColor(b, color)
         );
         if(starWidth > 0){
             BlackHoleRenderer.addStar(
                 b.x, b.y,
                 starWidth * fout, starHeight * fout, starAngle,
-                getColor(b, starIn), getColor(b, starOut)
+                teamColor(b, starIn), teamColor(b, starOut)
             );
         }
     }
@@ -140,10 +141,6 @@ public class BlackHoleBulletType extends BulletType{
             Mathf.curve(b.time, 0f, growTime)
                 - Mathf.curve(b.time, b.lifetime - shrinkTime, b.lifetime)
         );
-    }
-
-    public Color getColor(Bullet b, Color color){
-        return color == null ? b.team.color : color;
     }
 
     @Override

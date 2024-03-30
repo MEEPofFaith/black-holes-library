@@ -46,7 +46,7 @@ public class BlackHoleBulletType extends BulletType{
     public BlackHoleBulletType(float speed, float damage){
         super(speed, damage);
         hittable = absorbable = false;
-        collides = collidesAir = collidesGround = collidesTiles = false;
+        collides = false;
         pierce = true;
         shootEffect = smokeEffect = Fx.none;
         despawnEffect = Fx.none;

@@ -145,15 +145,18 @@ public class BlackHoleBulletType extends BulletType{
 
     @Override
     public void despawned(Bullet b){
-        despawnEffect.at(b.x, b.y, b.rotation(), b.team.color);
-
-        hitSound.at(b);
-
-        Effect.shake(despawnShake, despawnShake, b);
-
-        if(!b.hit && (fragBullet != null || splashDamageRadius > 0f || lightning > 0)){
+        if(despawnHit){
             hit(b);
+        }else{
+            createUnits(b, b.x, b.y);
         }
+
+        if(!fragOnHit){
+            createFrags(b, b.x, b.y);
+        }
+
+        despawnEffect.at(b.x, b.y, b.rotation(), b.team.color);
+        despawnSound.at(b);
     }
 
     @Override

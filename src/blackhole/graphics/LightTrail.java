@@ -61,7 +61,7 @@ public class LightTrail extends Trail{
                 x2 + nx, y2 + ny,
                 x2 - nx, y2 - ny
             );
-            Drawf.light(x1, y1, x2, y2, w2, color.cpy(), light * lightOpacity);
+            Drawf.light(x1, y1, x2, y2, (i/3f + 1) * size * w2 * 6f, color.cpy(), light * lightOpacity);
 
             lastAngle = z2;
         }

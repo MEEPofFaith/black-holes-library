@@ -31,7 +31,7 @@ public class SwirlEffect extends Effect{
      */
     public float minDst, maxDst;
     /** If < 0, don't emit light. */
-    public float lightOpacity = 1f;
+    public float lightOpacity = 0.8f;
     /** If true, particle fades from edgeColor to effect color. Else, the particle is constantly the effect color. */
     public boolean lerp;
     public @Nullable Color edgeColor;

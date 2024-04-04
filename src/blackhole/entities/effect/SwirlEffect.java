@@ -1,8 +1,6 @@
 package blackhole.entities.effect;
 
-import arc.*;
 import arc.graphics.*;
-import arc.graphics.g2d.*;
 import arc.math.*;
 import arc.util.*;
 import arc.util.pooling.*;
@@ -11,8 +9,8 @@ import mindustry.gen.*;
 import mindustry.graphics.*;
 import mindustry.world.blocks.defense.turrets.BaseTurret.*;
 
-import static arc.graphics.g2d.Draw.*;
 import static arc.util.Tmp.*;
+import static mindustry.Vars.state;
 
 /**
  * A particle with a trail that falls into the center.
@@ -20,8 +18,6 @@ import static arc.util.Tmp.*;
  * Inputting a negative value makes the particle swirl counter-clockwise instead of clockwise.
  */
 public class SwirlEffect extends Effect{
-    private static TextureRegion hCircle;
-
     /** How many points long the trail is. */
     public int length;
     /** Radius of the trail. */
@@ -99,58 +95,28 @@ public class SwirlEffect extends Effect{
         }
         float l = Mathf.clamp(e.time / lifetime);
         if(lerp){
-            color(edgeColor, e.color, l);
+            Tmp.c1.set(edgeColor).lerp(e.color, l);
         }else{
-            color(e.color);
+            Tmp.c1.set(e.color);
         }
 
-        int points = (int)Math.min(e.time, length);
         float width = Mathf.clamp(e.time / (e.lifetime - length)) * this.width;
-        float size = width / points;
         float dir = spinDirectionOverride != 0 ? Mathf.sign(spinDirectionOverride) : Mathf.sign(e.rotation);
         float baseRot = Mathf.randomSeed(e.id + 1, 360f), addRot = Mathf.randomSeed(e.id + 2, minRot, maxRot) * dir;
 
-        float fout, lastAng = 0f;
-        for(int i = 0; i < points; i++){
-            fout = 1f - Mathf.clamp((e.time - points + i) / lifetime);
-            v1.trns(baseRot + addRot * spinterp.apply(fout), Mathf.maxZero(dst * fallterp.apply(fout)));
-            fout = 1f - Mathf.clamp((e.time - points + i + 1) / lifetime);
-            v2.trns(baseRot + addRot * spinterp.apply(fout), Mathf.maxZero(dst * fallterp.apply(fout)));
-
-            //Reached center, break
-            if(v1.equals(v2)){
-                width = i * size;
-                break;
+        Trail trail = (Trail)e.data;
+        if(!state.isPaused()){
+            float f = 1f - (e.time / lifetime);
+            if(f > 0f){
+                v1.trns(baseRot + addRot * spinterp.apply(f), Mathf.maxZero(dst * fallterp.apply(f))).add(e.x, e.y);
+                trail.update(v1.x, v1.y);
+            }else{
+                trail.shorten();
             }
-
-            float a2 = -v1.angleTo(v2) * Mathf.degRad;
-            float a1 = i == 0 ? a2 : lastAng;
-
-            float
-                cx = Mathf.sin(a1) * i * size,
-                cy = Mathf.cos(a1) * i * size,
-                nx = Mathf.sin(a2) * (i + 1) * size,
-                ny = Mathf.cos(a2) * (i + 1) * size;
-
-            Fill.quad(
-                e.x + v1.x - cx, e.y + v1.y - cy,
-                e.x + v1.x + cx, e.y + v1.y + cy,
-                e.x + v2.x + nx, e.y + v2.y + ny,
-                e.x + v2.x - nx, e.y + v2.y - ny
-            );
-            if(light){
-                Drawf.light(
-                    e.x + v1.x, e.y + v1.y,
-                    e.x + v2.x, e.y + v2.y,
-                    i * size * 6f, Draw.getColor().cpy(), l * lightOpacity
-                );
-            }
-
-            lastAng = a2;
         }
 
-        if(hCircle == null) hCircle = Core.atlas.find("hcircle");
-        Draw.rect(hCircle, e.x + v2.x, e.y + v2.y, width * 2f, width * 2f, -Mathf.radDeg * lastAng);
+        trail.drawCap(Tmp.c1, width);
+        trail.draw(Tmp.c1, width);
     }
 
     @Override
@@ -158,7 +124,6 @@ public class SwirlEffect extends Effect{
         BlackHoleEffectState entity = BlackHoleEffectState.create();
         entity.effect = this;
         entity.rotation = baseRotation + rotation;
-        entity.data = data;
         entity.lifetime = lifetime;
         entity.set(x, y);
         entity.color.set(color);
@@ -166,6 +131,7 @@ public class SwirlEffect extends Effect{
             entity.parent = p;
             entity.rotWithParent = rotWithParent;
         }
+        entity.data = new Trail(length);
         entity.add();
     }
 

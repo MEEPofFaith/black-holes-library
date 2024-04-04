@@ -4,13 +4,14 @@ import arc.graphics.*;
 import arc.math.*;
 import arc.util.*;
 import arc.util.pooling.*;
+import blackhole.graphics.*;
 import mindustry.entities.*;
 import mindustry.gen.*;
 import mindustry.graphics.*;
 import mindustry.world.blocks.defense.turrets.BaseTurret.*;
 
 import static arc.util.Tmp.*;
-import static mindustry.Vars.state;
+import static mindustry.Vars.*;
 
 /**
  * A particle with a trail that falls into the center.
@@ -29,8 +30,7 @@ public class SwirlEffect extends Effect{
      * however the sign of the input is still used to determine rotation direction.
      */
     public float minDst, maxDst;
-    /** Whether particles emit light. */
-    public boolean light;
+    /** If < 0, don't emit light. */
     public float lightOpacity = 1f;
     /** If true, particle fades from edgeColor to effect color. Else, the particle is constantly the effect color. */
     public boolean lerp;
@@ -40,7 +40,7 @@ public class SwirlEffect extends Effect{
     /** Overrides spin direction from radius provided by bullet rotation. >1 for clockwise, <1 for counter-clockwise */
     public float spinDirectionOverride = 0f;
 
-    public SwirlEffect(float lifetime, float clipsize, Color edgeColor, int length, float width, float minRot, float maxRot, float minDst, float maxDst, boolean light, boolean lerp){
+    public SwirlEffect(float lifetime, float clipsize, Color edgeColor, int length, float width, float minRot, float maxRot, float minDst, float maxDst, boolean lerp){
         super();
         this.lifetime = lifetime;
         this.clip = clipsize;
@@ -51,23 +51,18 @@ public class SwirlEffect extends Effect{
         this.maxRot = maxRot;
         this.minDst = minDst;
         this.maxDst = maxDst;
-        this.light = light;
         this.lerp = lerp;
 
         followParent = rotWithParent = true;
         layer = Layer.effect + 0.005f;
     }
 
-    public SwirlEffect(float lifetime, Color edgeColor, int length, float width, float minRot, float maxRot, float minDst, float maxDst, boolean light, boolean lerp){
-        this(lifetime, 400f, edgeColor, length, width, minRot, maxRot, minDst, maxDst, light, lerp);
-    }
-
-    public SwirlEffect(float lifetime, int length, float width, float minRot, float maxRot, boolean light, boolean lerp){
-        this(lifetime, Color.black, length, width, minRot, maxRot, -1, -1, light, lerp);
+    public SwirlEffect(float lifetime, Color edgeColor, int length, float width, float minRot, float maxRot, float minDst, float maxDst, boolean lerp){
+        this(lifetime, 400f, edgeColor, length, width, minRot, maxRot, minDst, maxDst, lerp);
     }
 
     public SwirlEffect(float lifetime, int length, float width, float minRot, float maxRot, boolean lerp){
-        this(lifetime, length, width, minRot, maxRot, true, lerp);
+        this(lifetime, Color.black, length, width, minRot, maxRot, -1, -1, lerp);
     }
 
     public SwirlEffect(){
@@ -116,7 +111,12 @@ public class SwirlEffect extends Effect{
         }
 
         trail.drawCap(Tmp.c1, width);
-        trail.draw(Tmp.c1, width);
+
+        if(trail instanceof LightTrail lightTrail){
+            lightTrail.draw(Tmp.c1, width, l);
+        }else{
+            trail.draw(Tmp.c1, width);
+        }
     }
 
     @Override
@@ -131,7 +131,7 @@ public class SwirlEffect extends Effect{
             entity.parent = p;
             entity.rotWithParent = rotWithParent;
         }
-        entity.data = new Trail(length);
+        entity.data = lightOpacity > 0f ? new LightTrail(length, lightOpacity) : new Trail(length);
         entity.add();
     }
 

@@ -9,6 +9,7 @@ import arc.util.pooling.*;
 import mindustry.entities.*;
 import mindustry.gen.*;
 import mindustry.graphics.*;
+import mindustry.world.blocks.defense.turrets.BaseTurret.*;
 
 import static arc.graphics.g2d.Draw.*;
 import static arc.util.Tmp.*;
@@ -169,30 +170,57 @@ public class SwirlEffect extends Effect{
     }
 
     public static class BlackHoleEffectState extends EffectState{
-        public static BlackHoleEffectState create() {
+        public static BlackHoleEffectState create(){
             return Pools.obtain(BlackHoleEffectState.class, BlackHoleEffectState::new);
         }
 
         @Override
-        public void update(){
-            followParent: {
-                if(parent != null && parent.isAdded()){
+        public void add(){
+            if(!added){
+                index__all = Groups.all.addIndex(this);
+                index__draw = Groups.draw.addIndex(this);
+                if(parent != null){
+                    offsetX = x - parent.x();
+                    offsetY = y - parent.y();
                     if(rotWithParent){
                         if(parent instanceof Rotc r){
-                            x = parent.getX() + Angles.trnsx(r.rotation() + offsetPos, offsetX, offsetY);
-                            y = parent.getY() + Angles.trnsy(r.rotation() + offsetPos, offsetX, offsetY);
-                            //Do not change rotation. It is used for radius.
-                            break followParent;
+                            offsetPos = -r.rotation();
+                            offsetRot = rotation - r.rotation();
+                        }else if(parent instanceof BaseTurretBuild build){
+                            offsetPos = -build.rotation;
+                            offsetRot = rotation - build.rotation;
                         }
                     }
-
-                    x = parent.getX() + offsetX;
-                    y = parent.getY() + offsetY;
                 }
+
+                added = true;
+            }
+        }
+
+        @Override
+        public void update(){
+            followParent:
+            if(parent != null){
+                if(rotWithParent){
+                    if(parent instanceof Rotc r){
+                        x = parent.x() + Angles.trnsx(r.rotation() + offsetPos, offsetX, offsetY);
+                        y = parent.y() + Angles.trnsy(r.rotation() + offsetPos, offsetX, offsetY);
+                        //Do not change rotation. It is used for radius.
+                        break followParent;
+                    }else if(parent instanceof BaseTurretBuild build){
+                        x = parent.x() + Angles.trnsx(build.rotation + offsetPos, offsetX, offsetY);
+                        y = parent.y() + Angles.trnsy(build.rotation + offsetPos, offsetX, offsetY);
+                        //Do not change rotation. It is used for radius.
+                        break followParent;
+                    }
+                }
+
+                x = parent.x() + offsetX;
+                y = parent.y() + offsetY;
             }
 
-            time = Math.min(time + Time.delta,lifetime);
-            if (time >= lifetime) {
+            time = Math.min(time + Time.delta, lifetime);
+            if(time >= lifetime){
                 remove();
             }
         }

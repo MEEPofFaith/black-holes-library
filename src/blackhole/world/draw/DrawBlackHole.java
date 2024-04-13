@@ -7,7 +7,7 @@ import mindustry.gen.*;
 import mindustry.world.*;
 import mindustry.world.draw.*;
 
-import static blackhole.graphics.BHDrawf.teamColor;
+import static blackhole.graphics.BHDrawf.*;
 
 public class DrawBlackHole extends DrawBlock{
     public float x, y, size, edge;

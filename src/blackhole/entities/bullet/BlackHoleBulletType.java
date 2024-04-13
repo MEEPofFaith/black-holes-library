@@ -13,7 +13,7 @@ import mindustry.entities.*;
 import mindustry.entities.bullet.*;
 import mindustry.gen.*;
 
-import static blackhole.graphics.BHDrawf.teamColor;
+import static blackhole.graphics.BHDrawf.*;
 import static mindustry.Vars.*;
 
 public class BlackHoleBulletType extends BulletType{

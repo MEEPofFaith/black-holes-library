@@ -20,11 +20,11 @@ import static mindustry.Vars.*;
  */
 public class SwirlEffect extends Effect{
     /** How many points long the trail is. */
-    public int length;
+    public int length = 8;
     /** Radius of the trail. */
-    public float width;
+    public float width = 3;
     /** How much the particle will revolve around the center in degrees. */
-    public float minRot, maxRot;
+    public float minRot = 120, maxRot = 480;
     /**
      * If set to values >= 0, the radius will be a random amount between minDst and maxDst,
      * however the sign of the input is still used to determine rotation direction.
@@ -32,41 +32,43 @@ public class SwirlEffect extends Effect{
     public float minDst, maxDst;
     /** If < 0, don't emit light. */
     public float lightOpacity = 0.8f;
-    /** If true, particle fades from edgeColor to effect color. Else, the particle is constantly the effect color. */
-    public boolean lerp;
-    public @Nullable Color edgeColor;
+    /** If null, uses effect color. */
+    public @Nullable Color colorFrom;
+    /** If null, uses effect color. */
+    public @Nullable Color colorTo;
     public Interp fallterp = Interp.pow2Out;
     public Interp spinterp = Interp.pow3Out;
     /** Overrides spin direction from radius provided by bullet rotation. >1 for clockwise, <1 for counter-clockwise */
     public float spinDirectionOverride = 0f;
 
-    public SwirlEffect(float lifetime, float clipsize, Color edgeColor, int length, float width, float minRot, float maxRot, float minDst, float maxDst, boolean lerp){
+    {
+        followParent = rotWithParent = true;
+        layer = Layer.effect + 0.005f; //Black doesn't work with bloom so draw slightly above the bloom layer.
+    }
+
+    public SwirlEffect(float lifetime, float clipsize, Color colorFrom, int length, float width, float minRot, float maxRot, float minDst, float maxDst){
         super();
         this.lifetime = lifetime;
         this.clip = clipsize;
-        this.edgeColor = edgeColor;
+        this.colorFrom = colorFrom;
         this.length = length;
         this.width = width;
         this.minRot = minRot;
         this.maxRot = maxRot;
         this.minDst = minDst;
         this.maxDst = maxDst;
-        this.lerp = lerp;
-
-        followParent = rotWithParent = true;
-        layer = Layer.effect + 0.005f;
     }
 
-    public SwirlEffect(float lifetime, Color edgeColor, int length, float width, float minRot, float maxRot, float minDst, float maxDst, boolean lerp){
-        this(lifetime, 400f, edgeColor, length, width, minRot, maxRot, minDst, maxDst, lerp);
+    public SwirlEffect(float lifetime, Color colorFrom, int length, float width, float minRot, float maxRot, float minDst, float maxDst){
+        this(lifetime, 400f, colorFrom, length, width, minRot, maxRot, minDst, maxDst);
     }
 
-    public SwirlEffect(float lifetime, int length, float width, float minRot, float maxRot, boolean lerp){
-        this(lifetime, Color.black, length, width, minRot, maxRot, -1, -1, lerp);
+    public SwirlEffect(float lifetime, int length, float width, float minRot, float maxRot){
+        this(lifetime, Color.black, length, width, minRot, maxRot, -1, -1);
     }
 
     public SwirlEffect(){
-        this(90f, 8, 3f, 120f, 480f, true);
+        super();
     }
 
     public SwirlEffect setInterps(Interp fallterp, Interp spinterp){
@@ -89,8 +91,8 @@ public class SwirlEffect extends Effect{
             dst = Mathf.randomSeed(e.id, minDst, maxDst);
         }
         float l = Mathf.clamp(e.time / lifetime);
-        if(lerp){
-            Tmp.c1.set(edgeColor).lerp(e.color, l);
+        if(colorFrom != null || colorTo != null){
+            Tmp.c1.set(colorFrom == null ? e.color : colorFrom).lerp(colorTo == null ? e.color : colorTo, l);
         }else{
             Tmp.c1.set(e.color);
         }

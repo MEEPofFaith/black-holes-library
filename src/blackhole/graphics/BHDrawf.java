@@ -13,7 +13,7 @@ public class BHDrawf{
     }
 
     public static void drawStar(float x, float y, float w, float h, float angleOffset, float centerColor, float edgeColor){
-        int sides = Lines.circleVertices(w + h) / 4 * 4; //Ensure multiple of 4
+        int sides = mul4(Lines.circleVertices(w + h));
         float space = 360f / sides;
 
         for(int i = 0; i < sides; i++){
@@ -38,5 +38,12 @@ public class BHDrawf{
         theta *= degRad;
         float b = -2 * sqrt2 * cos(theta - pi / 4f);
         return (-b - sqrt(b * b - 4)) / 2;
+    }
+
+    private static int mul4(int value){
+        while(value % 4 != 0){
+            value++;
+        }
+        return value;
     }
 }

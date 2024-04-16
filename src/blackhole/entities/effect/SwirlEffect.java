@@ -29,7 +29,7 @@ public class SwirlEffect extends Effect{
      * If set to values >= 0, the radius will be a random amount between minDst and maxDst,
      * however the sign of the input is still used to determine rotation direction.
      */
-    public float minDst, maxDst;
+    public float minDst = -1f, maxDst = -1f;
     /** If < 0, don't emit light. */
     public float lightOpacity = 0.8f;
     /** If null, uses effect color. */
@@ -42,8 +42,9 @@ public class SwirlEffect extends Effect{
     public float spinDirectionOverride = 0f;
 
     {
+        lifetime = 90f;
         followParent = rotWithParent = true;
-        layer = Layer.effect + 0.005f; //Black doesn't work with bloom so draw slightly above the bloom layer.
+        layer = Layer.effect + 0.005f; //Black doesn't work with bloom so draw slightly above the bloom layer by default.
     }
 
     public SwirlEffect(float lifetime, float clipsize, Color colorFrom, int length, float width, float minRot, float maxRot, float minDst, float maxDst){
@@ -65,6 +66,11 @@ public class SwirlEffect extends Effect{
 
     public SwirlEffect(float lifetime, int length, float width, float minRot, float maxRot){
         this(lifetime, Color.black, length, width, minRot, maxRot, -1, -1);
+    }
+
+    public SwirlEffect(Color colorFrom){
+        this();
+        this.colorFrom = colorFrom;
     }
 
     public SwirlEffect(){

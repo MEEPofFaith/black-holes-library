@@ -35,7 +35,7 @@ public class BlackHoleBulletType extends BulletType{
     public float starWidth = -1, starHeight = -1, starAngle;
     public @Nullable Color starIn, starOut;
 
-    public Effect swirlEffect = new SwirlEffect();
+    public Effect swirlEffect = new SwirlEffect(Color.black);
     public float swirlInterval = 3f;
     public int swirlEffects = 4;
     public boolean counterClockwise = false;

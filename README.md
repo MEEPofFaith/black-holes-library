@@ -2,6 +2,8 @@
 
 This is a library mod used for the rendering of black holes.
 
+![example.png](images/example.png)
+
 ## Warning
 
 **Do not just copy this mod's code into your mod.**

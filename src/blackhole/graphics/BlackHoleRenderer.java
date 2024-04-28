@@ -25,6 +25,9 @@ public class BlackHoleRenderer{
 
     private FrameBuffer buffer;
 
+    private static final float[][] initHoles = new float[510][];
+    private static final float[][] initColors = new float[510][];
+
     protected BlackHoleRenderer(boolean advanced){
         BHShaders.createBlackHoleShaders();
         advanced(advanced);
@@ -40,6 +43,12 @@ public class BlackHoleRenderer{
 
     public static void init(boolean advanced){
         if(bRenderer == null) bRenderer = new BlackHoleRenderer(advanced);
+
+        if(!advanced) return;
+        for(int i = 0; i < 510; i++){
+            initHoles[i] = new float[i * 4];
+            initColors[i] = new float[i * 4];
+        }
     }
 
     public static void toggleAdvanced(boolean advanced){
@@ -77,9 +86,10 @@ public class BlackHoleRenderer{
             buffer.end();
 
             if(zones.size >= BHShaders.maxCount) BHShaders.createBlackHoleShaders();
+            if(zones.size >= 510) return;
 
-            float[] blackholes = new float[zones.size * 4];
-            float[] colors = new float[zones.size * 4];
+            float[] blackholes = initHoles[zones.size];
+            float[] colors = initColors[zones.size];
             for(int i = 0; i < zones.size; i++){
                 BlackHoleZone zone = zones.get(i);
                 blackholes[i * 4] = zone.x;

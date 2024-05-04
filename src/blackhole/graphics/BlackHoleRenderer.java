@@ -29,8 +29,8 @@ public class BlackHoleRenderer{
 
     private static final float[][] initHoles = new float[510][];
     private static final float[][] initColors = new float[510][];
-    private static final Pool<BlackHoleZone> zonePool = Pools.get(BlackHoleZone.class, BlackHoleZone::new);
-    private static final Pool<BlackHoleStar> starPool = Pools.get(BlackHoleStar.class, BlackHoleStar::new);
+    //private static final Pool<BlackHoleZone> zonePool = Pools.get(BlackHoleZone.class, BlackHoleZone::new);
+    //private static final Pool<BlackHoleStar> starPool = Pools.get(BlackHoleStar.class, BlackHoleStar::new);
 
 
     protected BlackHoleRenderer(boolean advanced){
@@ -152,7 +152,7 @@ public class BlackHoleRenderer{
                 drawStars();
             }
 
-            zonePool.freeAll(zones);
+            //zonePool.freeAll(zones);
             zones.clear();
         });
     }
@@ -186,7 +186,7 @@ public class BlackHoleRenderer{
             BHDrawf.drawStar(star.x, star.y, star.w, star.h, star.angleOffset, star.inColor, star.outColor);
         }
 
-        starPool.freeAll(stars);
+        //starPool.freeAll(stars);
         stars.clear();
     }
 
@@ -204,13 +204,13 @@ public class BlackHoleRenderer{
 
         float res = Color.toFloatBits(color.r, color.g, color.b, 1);
 
-        zones.add(zonePool.obtain().set(x, y, res, inRadius, outRadius));
+        zones.add(Pools.obtain(BlackHoleZone.class, BlackHoleZone::new).set(x, y, res, inRadius, outRadius));
     }
 
     private void addS(float x, float y, float w, float h, float angleOffset, Color in, Color out){
         if(w <= 0 || h <= 0) return;
 
-        stars.add(starPool.obtain().set(x, y, w, h, angleOffset, in.toFloatBits(), out.toFloatBits()));
+        stars.add(Pools.obtain(BlackHoleStar.class, BlackHoleStar::new).set(x, y, w, h, angleOffset, in.toFloatBits(), out.toFloatBits()));
     }
 
     private static class BlackHoleZone{

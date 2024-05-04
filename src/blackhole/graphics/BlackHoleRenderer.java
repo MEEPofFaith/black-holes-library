@@ -128,7 +128,7 @@ public class BlackHoleRenderer{
                 drawStars();
             }
 
-            zonePool.freeAll(zones);
+            //zonePool.freeAll(zones);
             zones.clear();
         });
     }

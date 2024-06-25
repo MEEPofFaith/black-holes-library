@@ -20,6 +20,11 @@ public class BlackHolePart extends DrawPart{
     public @Nullable Color colorTo;
     public boolean mirror = false;
 
+    public void setConstant(){
+        progress = PartProgress.constant(1f);
+        growProgress = PartProgress.constant(1f);
+    }
+
     @Override
     public void draw(PartParams params){
         float prog = progress.getClamp(params), sclProg = growProgress.getClamp(params);

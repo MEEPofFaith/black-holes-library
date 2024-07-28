@@ -18,6 +18,8 @@ public class BlackHoleMod extends Mod{
 
     @Override
     public void init(){
+        if(headless) return;
+
         BlackHoleRenderer.init(settings.getBool("advanced-black-hole-rendering", true));
 
         ui.settings.graphics.checkPref("advanced-black-hole-rendering", true, BlackHoleRenderer::toggleAdvanced);

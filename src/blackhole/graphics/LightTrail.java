@@ -25,8 +25,8 @@ public class LightTrail extends Trail{
     }
 
     public void draw(Color color, float width, float light){
-        Draw.color(color);
         drawColor.set(color);
+        Draw.color(color);
         float[] items = points.items;
         float lastAngle = this.lastAngle;
         float size = width / (points.size / 3);

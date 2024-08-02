@@ -66,6 +66,10 @@ public class BlackHoleBulletType extends BulletType{
         if(starWidth > 0 && starHeight < 0) starHeight = starWidth / 2;
 
         drawSize = Math.max(drawSize, lensingRadius * 2f);
+
+        if(swirlEffect instanceof SwirlEffect s && s.maxDst <= 0){
+            s.clip = Math.max(s.clip, suctionRadius * 2f);
+        }
     }
 
     @Override

@@ -88,6 +88,11 @@ public class SwirlEffect extends Effect{
     }
 
     @Override
+    public void init(){
+        clip = Math.max(clip, maxDst * 2f);
+    }
+
+    @Override
     public void render(EffectContainer e){
         float lifetime = e.lifetime - length;
         float dst;

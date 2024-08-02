@@ -18,9 +18,11 @@ import static mindustry.Vars.*;
  * @author MEEPofFaith
  * */
 public class BlackHoleRenderer{
-    private final Seq<BlackHoleZone> zones = new Seq<>();
-    private final Seq<BlackHoleStar> stars = new Seq<>();
+    private final Seq<BlackHoleZone> zones = new Seq<>(BlackHoleZone.class);
+    private final Seq<BlackHoleStar> stars = new Seq<>(BlackHoleStar.class);
     private static BlackHoleRenderer bRenderer;
+    private int zonesIndex;
+    private int starsIndex;
     private boolean advanced = true;
 
     private FrameBuffer buffer;
@@ -78,10 +80,10 @@ public class BlackHoleRenderer{
 
             if(zones.size >= BHShaders.maxCount) BHShaders.createBlackHoleShaders();
 
-            float[] blackholes = new float[zones.size * 4];
-            float[] colors = new float[zones.size * 4];
-            for(int i = 0; i < zones.size; i++){
-                BlackHoleZone zone = zones.get(i);
+            float[] blackholes = new float[zonesIndex * 4];
+            float[] colors = new float[zonesIndex * 4];
+            for(int i = 0; i < zonesIndex; i++){
+                BlackHoleZone zone = zones.items[i];
                 blackholes[i * 4] = zone.x;
                 blackholes[i * 4 + 1] = zone.y;
                 blackholes[i * 4 + 2] = zone.inRadius;
@@ -112,14 +114,16 @@ public class BlackHoleRenderer{
                 buffer.blit(BHShaders.rimShader);
                 drawStars();
             }
-            zones.clear();
+
+            zonesIndex = 0;
         });
     }
 
     private void simplifiedDraw(){
         Draw.draw(Layer.max, () -> {
             Draw.color(Color.black);
-            for(BlackHoleZone zone : zones){
+            for(int i = 0; i < zonesIndex; i++){
+                BlackHoleZone zone = zones.items[i];
                 Fill.circle(zone.x, zone.y, zone.inRadius);
             }
             Draw.color();
@@ -135,12 +139,13 @@ public class BlackHoleRenderer{
                 drawStars();
             }
 
-            zones.clear();
+            zonesIndex = 0;
         });
     }
 
     private void simplifiedRims(){
-        for(BlackHoleZone zone : zones){
+        for(int i = 0; i < zonesIndex; i++){
+            BlackHoleZone zone = zones.items[i];
             float rad = Mathf.lerp(zone.inRadius, zone.outRadius, 0.125f);
             int vert = Lines.circleVertices(rad);
             float space = 360f / vert;
@@ -149,9 +154,9 @@ public class BlackHoleRenderer{
             float c1 = Tmp.c1.toFloatBits();
             float c2 = Tmp.c1.a(0).toFloatBits();
 
-            for(int i = 0; i < vert; i++){
-                float sin1 = Mathf.sinDeg(i * space), sin2 = Mathf.sinDeg((i + 1) * space);
-                float cos1 = Mathf.cosDeg(i * space), cos2 = Mathf.cosDeg((i + 1) * space);
+            for(int j = 0; j < vert; j++){
+                float sin1 = Mathf.sinDeg(j * space), sin2 = Mathf.sinDeg((j + 1) * space);
+                float cos1 = Mathf.cosDeg(j * space), cos2 = Mathf.cosDeg((j + 1) * space);
 
                 Fill.quad(
                     zone.x + cos1 * zone.inRadius, zone.y + sin1 * zone.inRadius, c1,
@@ -164,10 +169,11 @@ public class BlackHoleRenderer{
     }
 
     private void drawStars(){
-        for(BlackHoleStar star : stars){
+        for(int i = 0; i < starsIndex; i++){
+            BlackHoleStar star = stars.items[i];
             BHDrawf.drawStar(star.x, star.y, star.w, star.h, star.angleOffset, star.inColor, star.outColor);
         }
-        stars.clear();
+        starsIndex = 0;
     }
 
     private void advanced(boolean advanced){
@@ -181,22 +187,30 @@ public class BlackHoleRenderer{
 
     private void addBH(float x, float y, float inRadius, float outRadius, Color color){
         if(inRadius > outRadius || outRadius <= 0) return;
+        if(zones.size <= zonesIndex) zones.add(new BlackHoleZone());
 
         float res = Color.toFloatBits(color.r, color.g, color.b, 1);
 
-        zones.add(new BlackHoleZone(x, y, res, inRadius, outRadius));
+        BlackHoleZone zone = zones.items[zonesIndex];
+        zone.set(x, y, res, inRadius, outRadius);
+
+        zonesIndex++;
     }
 
     private void addS(float x, float y, float w, float h, float angleOffset, Color in, Color out){
         if(w <= 0 || h <= 0) return;
+        if(stars.size <= starsIndex) stars.add(new BlackHoleStar());
 
-        stars.add(new BlackHoleStar(x, y, w, h, angleOffset, in.toFloatBits(), out.toFloatBits()));
+        BlackHoleStar star = stars.items[starsIndex];
+        star.set(x, y, w, h, angleOffset, in.toFloatBits(), out.toFloatBits());
+
+        starsIndex++;
     }
 
     private static class BlackHoleZone{
         float x, y, color, inRadius, outRadius;
 
-        public BlackHoleZone(float x, float y, float color, float inRadius, float outRadius){
+        public void set(float x, float y, float color, float inRadius, float outRadius){
             this.x = x;
             this.y = y;
             this.color = color;
@@ -209,7 +223,7 @@ public class BlackHoleRenderer{
     private static class BlackHoleStar{
         float x, y, w, h, angleOffset, inColor, outColor;
 
-        public BlackHoleStar(float x, float y, float w, float h, float angleOffset, float inColor, float outColor){
+        public void set(float x, float y, float w, float h, float angleOffset, float inColor, float outColor){
             this.x = x;
             this.y = y;
             this.w = w;

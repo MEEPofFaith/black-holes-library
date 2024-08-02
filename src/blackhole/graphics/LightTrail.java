@@ -6,6 +6,7 @@ import arc.math.*;
 import mindustry.graphics.*;
 
 public class LightTrail extends Trail{
+    private final Color drawColor = new Color();
     public float lightOpacity;
 
     public LightTrail(int length, float lightOpacity){
@@ -25,6 +26,7 @@ public class LightTrail extends Trail{
 
     public void draw(Color color, float width, float light){
         Draw.color(color);
+        drawColor.set(color);
         float[] items = points.items;
         float lastAngle = this.lastAngle;
         float size = width / (points.size / 3);
@@ -61,7 +63,7 @@ public class LightTrail extends Trail{
                 x2 + nx, y2 + ny,
                 x2 - nx, y2 - ny
             );
-            Drawf.light(x1, y1, x2, y2, (i/3f + 1) * size * w2 * 6f, color.cpy(), light * lightOpacity);
+            Drawf.light(x1, y1, x2, y2, (i/3f + 1) * size * w2 * 6f, drawColor, light * lightOpacity);
 
             lastAngle = z2;
         }

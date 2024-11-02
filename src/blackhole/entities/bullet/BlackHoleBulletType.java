@@ -47,7 +47,6 @@ public class BlackHoleBulletType extends BulletType{
         super(speed, damage);
         hittable = absorbable = false;
         collides = false;
-        pierce = true;
         shootEffect = smokeEffect = Fx.none;
         despawnEffect = Fx.none;
         layer = BHLayer.end + 0.01f;
@@ -93,7 +92,7 @@ public class BlackHoleBulletType extends BulletType{
             BlackHoleUtils.blackHoleUpdate(
                 b.team, b,
                 damageRadius * fout, suctionRadius * fout,
-                b.damage, bulletDamage * damageMultiplier(b),
+                b.damage, pierceArmor, buildingDamageMultiplier, bulletDamage * damageMultiplier(b),
                 repel, force, scaledForce, bulletForce, scaledBulletForce
             );
         }

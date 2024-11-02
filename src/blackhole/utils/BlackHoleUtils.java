@@ -70,6 +70,8 @@ public class BlackHoleUtils{
      * @param damageRadius Radius where units and bullets are damaged
      * @param suctionRadius Radius where units and bullets are sucked towards the black hole
      * @param damage Damage dealt to units
+     * @param pierceArmor Damage ignores armor
+     * @param buildingDamageMultiplier Damage multiplier against buildings
      * @param bulletDamage Damage dealt to bullets
      * @param repel If true, pushes away instead of pulls in
      * @param force Base amount of force applied to units
@@ -80,12 +82,12 @@ public class BlackHoleUtils{
     public static void blackHoleUpdate(
         Team team, Posc source, float offsetX, float offsetY,
         float damageRadius, float suctionRadius,
-        float damage, float bulletDamage,
+        float damage, boolean pierceArmor, float buildingDamageMultiplier, float bulletDamage,
         boolean repel, float force, float scaledForce, float bulletForce, float scaledBulletForce
     ){
         float x = source.x() + offsetX, y = source.y() + offsetY;
 
-        if(damage > 0f) completeDamage(team, x, y, damageRadius, damage);
+        if(damage > 0f) completeDamage(team, x, y, damageRadius, damage, buildingDamageMultiplier, pierceArmor);
 
         Units.nearbyEnemies(team, x - suctionRadius, y - suctionRadius, suctionRadius * 2f, suctionRadius * 2f, unit -> {
             float rad = suctionRadius + unit.hitSize / 2f;
@@ -118,6 +120,58 @@ public class BlackHoleUtils{
                 }
             }
         });
+    }
+
+    /**
+     * Handles the suction and damage dealt by black holes
+     *
+     * @param team Team of the black hole. Suction & damage affects other teams.
+     * @param source What the black hole is updated from. Used to prevent a unit/bullet from affecting itself.
+     * @param offsetX x offset from the source's position
+     * @param offsetY y offset from the source's position
+     * @param damageRadius Radius where units and bullets are damaged
+     * @param suctionRadius Radius where units and bullets are sucked towards the black hole
+     * @param damage Damage dealt to units
+     * @param bulletDamage Damage dealt to bullets
+     * @param repel If true, pushes away instead of pulls in
+     * @param force Base amount of force applied to units
+     * @param scaledForce Scaled amount of force applied to units. As units get closer to the center, more of scaledForce is added to force.
+     * @param bulletForce Base amount of force applied to bullets.
+     * @param scaledBulletForce Scaled amount of force applied to bullets. As bullets get closer to the center, more of scaledForce is added to force.
+     */
+    public static void blackHoleUpdate(
+        Team team, Posc source, float offsetX, float offsetY,
+        float damageRadius, float suctionRadius,
+        float damage, float bulletDamage,
+        boolean repel, float force, float scaledForce, float bulletForce, float scaledBulletForce
+    ){
+        blackHoleUpdate(team, source, offsetX, offsetY, damageRadius, suctionRadius, damage, false, 1f, bulletDamage, repel, force, scaledForce, bulletForce, scaledBulletForce);
+    }
+
+    /**
+     * Handles the suction and damage dealt by black holes
+     *
+     * @param team Team of the black hole. Suction & damage affects other teams.
+     * @param source What the black hole is updated from. Used to prevent a unit/bullet from affecting itself.
+     * @param damageRadius Radius where units and bullets are damaged
+     * @param suctionRadius Radius where units and bullets are sucked towards the black hole
+     * @param damage Damage dealt to units
+     * @param pierceArmor Damage ignores armor
+     * @param buildingDamageMultiplier Damage multiplier against buildings
+     * @param bulletDamage Damage dealt to bullets
+     * @param repel If true, pushes away instead of pulls in
+     * @param force Base amount of force applied to units
+     * @param scaledForce Scaled amount of force applied to units. As units get closer to the center, more of scaledForce is added to force.
+     * @param bulletForce Base amount of force applied to bullets.
+     * @param scaledBulletForce Scaled amount of force applied to bullets. As bullets get closer to the center, more of scaledForce is added to force.
+     */
+    public static void blackHoleUpdate(
+        Team team, Posc source,
+        float damageRadius, float suctionRadius,
+        float damage, boolean pierceArmor, float buildingDamageMultiplier, float bulletDamage,
+        boolean repel, float force, float scaledForce, float bulletForce, float scaledBulletForce
+    ){
+        blackHoleUpdate(team, source, 0f, 0f, damageRadius, suctionRadius, damage, pierceArmor, buildingDamageMultiplier, bulletDamage, repel, force, scaledForce, bulletForce, scaledBulletForce);
     }
 
     /**
@@ -158,15 +212,27 @@ public class BlackHoleUtils{
     }
 
     public static void completeDamage(Team team, float x, float y, float radius, float damage){
+        completeDamage(team, x, y, radius, damage, 1f, false);
+    }
+
+    public static void completeDamage(Team team, float x, float y, float radius, float damage, float buildingDamageMultiplier, boolean pierceArmor){
         Units.nearbyEnemies(team, x - radius, y - radius, radius * 2f, radius * 2f, unit -> {
             if(!unit.dead && unit.hittable() && unit.within(x, y, radius + unit.hitSize / 2f)){
-                unit.damage(damage);
+                if(pierceArmor){
+                    unit.damagePierce(damage);
+                }else{
+                    unit.damage(damage);
+                }
             }
         });
 
         trueEachBlock(x, y, radius, build -> {
             if(build.team != team && !build.dead && build.block != null){
-                build.damage(damage);
+                if(pierceArmor){
+                    build.damagePierce(damage * buildingDamageMultiplier);
+                }else{
+                    build.damage(damage * buildingDamageMultiplier);
+                }
             }
         });
     }

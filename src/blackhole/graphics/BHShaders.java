@@ -20,10 +20,11 @@ public class BHShaders{
             rimShader.dispose();
         }
 
-        Shader.prependFragmentCode = "#define MAX_COUNT " + maxCount + "\n";
+        String oldPrepend = Shader.prependFragmentCode;
+        Shader.prependFragmentCode = oldPrepend + "\n#define MAX_COUNT " + maxCount + "\n";
         lensingShader = new LensingShader();
         rimShader = new RimShader();
-        Shader.prependFragmentCode = "";
+        Shader.prependFragmentCode = oldPrepend;
     }
 
     public static class LensingShader extends Shader{

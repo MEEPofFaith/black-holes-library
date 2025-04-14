@@ -10,6 +10,7 @@ sourceSets.main.java.srcDirs = ["src"]
 repositories{
     mavenCentral()
     maven{ url "https://raw.githubusercontent.com/Zelaux/MindustryRepo/master/repository" }
+    maven { url = uri("https://maven.xpdustry.com/mindustry") }
     maven{ url 'https://www.jitpack.io' }
 }
 
@@ -20,7 +21,7 @@ java{
 
 ext{
     //the build number that this mod is made for
-    mindustryVersion = 'v146'
+    mindustryVersion = 'v147.1'
     jabelVersion = "93fde537c7"
     //windows sucks
     isWindows = System.getProperty("os.name").toLowerCase().contains("windows")

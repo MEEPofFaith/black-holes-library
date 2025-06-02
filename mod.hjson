@@ -17,7 +17,7 @@ description: "A library mod for rendering black holes."
 version: 16
 
 #the minimum game build required to run this mod
-minGameVersion: 146
+minGameVersion: 149
 
 #this is a java mod
 java: true

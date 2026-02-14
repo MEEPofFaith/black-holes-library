@@ -40,7 +40,7 @@ public class BlackHoleBulletType extends BulletType{
     public int swirlEffects = 4;
     public boolean counterClockwise = false;
 
-    public Sound loopSound = Sounds.spellLoop;
+    public Sound loopSound = Sounds.loopThoriumReactor;
     public float loopSoundVolume = 2f;
 
     public BlackHoleBulletType(float speed, float damage){

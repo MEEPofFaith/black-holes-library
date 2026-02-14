@@ -107,7 +107,8 @@ public class BlackHoleUtils{
                 other.vel().add(impulse);
 
                 if(other.isRemote()){
-                    other.move(impulse.x, impulse.y);
+                    other.x += impulse.x;
+                    other.y += impulse.y;
                 }
 
                 //Damage/absorb bullets
